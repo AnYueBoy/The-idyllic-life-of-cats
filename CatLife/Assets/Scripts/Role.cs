@@ -58,10 +58,12 @@ public class Role : MonoBehaviour
     }
 
     private PlayableGraph playableGraph;
+    private readonly float moveSpeed = 1.5f;
 
     private void RoleMove(RoleDirection direction)
     {
         AnimationPlayableUtilities.PlayClip(animator, moveClipList[(int)direction], out playableGraph);
+       
     }
 
     private void RoleIdle(RoleDirection direction)
