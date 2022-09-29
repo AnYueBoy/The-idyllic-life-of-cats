@@ -14,6 +14,7 @@ public class Main : Framework
         GameObject catPrefab = App.Make<IAssetsManager>().GetAssetByUrlSync<GameObject>("Cat");
         GameObject catNode = App.Make<IObjectPool>().RequestInstance(catPrefab);
         Cat cat = catNode.GetComponent<Cat>();
+        cat.Init();
         App.Make<RoleManager>().AddRole(cat);
     }
 
@@ -25,6 +26,7 @@ public class Main : Framework
     private void Update()
     {
         float dt = Time.deltaTime;
+        App.Make<InputManager>().LocalUpdate(dt);
         App.Make<RoleManager>().LocalUpdate(dt);
     }
 }

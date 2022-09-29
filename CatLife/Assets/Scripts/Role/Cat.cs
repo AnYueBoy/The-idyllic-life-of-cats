@@ -41,7 +41,6 @@ public class Cat : BaseRole
 
     private void OnDisable()
     {
-        Debug.Log('x');
         App.Make<InputManager>().idleEvent -= RoleIdle;
         App.Make<InputManager>().moveEvent -= RoleMove;
     }
