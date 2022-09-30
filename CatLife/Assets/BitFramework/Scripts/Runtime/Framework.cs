@@ -30,7 +30,8 @@ namespace BitFramework.Runtime
 
         protected virtual void OnDestroy()
         {
-            bitApplication?.Terminate();
+            // FIXME: 因不同节点的生命周期不一致，因此可能造成相关实例已回收，但其他节点仍在访问的情况
+            // bitApplication?.Terminate();
         }
 
         protected virtual BitApplication CreateApplication(DebugLevel debugLevel)
