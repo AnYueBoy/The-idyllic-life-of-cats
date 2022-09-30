@@ -47,7 +47,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 48
+  spritePixelsToUnits: 24
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -4200,11 +4200,11 @@ TextureImporter:
       Premium Charakter Spritesheet_44: -153285723
       Premium Charakter Spritesheet_165: 1627563843
       Premium Charakter Spritesheet_4: -2011267404
-      Premium Charakter Spritesheet_48: 1395760833
       Premium Charakter Spritesheet_96: 792049971
-      Premium Charakter Spritesheet_150: -1089824607
+      Premium Charakter Spritesheet_48: 1395760833
       Premium Charakter Spritesheet_34: -913303285
       Premium Charakter Spritesheet_138: -391656943
+      Premium Charakter Spritesheet_150: -1089824607
       Premium Charakter Spritesheet_40: 1870526338
       Premium Charakter Spritesheet_2: 410356114
       Premium Charakter Spritesheet_47: -1599304909
