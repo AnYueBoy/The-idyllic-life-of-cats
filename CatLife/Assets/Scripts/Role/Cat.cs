@@ -60,13 +60,13 @@ public class Cat : BaseRole
 
     private void RoleMoveAni(RoleDirection direction)
     {
-        AnimationPlayableUtilities.PlayClip(animator, moveClipList[(int)direction], out playableGraph);
+        AnimationPlayableUtilities.PlayClip(animator, moveClipList[(int) direction], out playableGraph);
         roleDirection = direction;
     }
 
     private void RoleIdleAni(RoleDirection direction)
     {
-        AnimationPlayableUtilities.PlayClip(animator, idleClipList[(int)direction], out playableGraph);
+        AnimationPlayableUtilities.PlayClip(animator, idleClipList[(int) direction], out playableGraph);
         roleDirection = RoleDirection.None;
     }
 
@@ -74,5 +74,11 @@ public class Cat : BaseRole
     {
         App.Make<InputManager>().idleEvent -= RoleIdleAni;
         App.Make<InputManager>().moveEvent -= RoleMoveAni;
+    }
+
+    private void OnDestroy()
+    {
+        // FIXME: 每进行一个动画，便会创建一个playableGraph
+        playableGraph.Destroy();
     }
 }
