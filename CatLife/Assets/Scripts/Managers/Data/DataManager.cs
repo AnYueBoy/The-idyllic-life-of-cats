@@ -11,7 +11,7 @@ public class DataManager : IManager
         DeserializeData();
     }
 
-    private readonly float saveInterval = 30f;
+    private readonly float saveInterval = 5f;
     private float saveTimer;
 
     public void LocalUpdate(float dt)

@@ -102,6 +102,9 @@ public class Cat : BaseRole
 
     private void OnDestroy()
     {
-        playableGraph.Destroy();
+        if (playableGraph.IsValid())
+        {
+            playableGraph.Destroy();
+        }
     }
 }

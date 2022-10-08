@@ -26,6 +26,7 @@ public class Main : Framework
     private void Update()
     {
         float dt = Time.deltaTime;
+        App.Make<DataManager>().LocalUpdate(dt);
         App.Make<InputManager>().LocalUpdate(dt);
         App.Make<RoleManager>().LocalUpdate(dt);
     }

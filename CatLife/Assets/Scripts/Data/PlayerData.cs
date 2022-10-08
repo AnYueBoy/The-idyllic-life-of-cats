@@ -1,3 +1,6 @@
-﻿public class PlayerData
+﻿using UnityEngine;
+
+public class PlayerData
 {
+    private CatData catData = new CatData();
 }
