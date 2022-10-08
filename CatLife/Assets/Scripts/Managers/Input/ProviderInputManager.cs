@@ -4,6 +4,7 @@ public class ProviderInputManager : IServiceProvider
 {
     public void Init()
     {
+        App.Make<InputManager>().Init();
     }
 
     public void Register()

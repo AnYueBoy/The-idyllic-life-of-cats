@@ -108,6 +108,11 @@ MonoBehaviour:
   - {fileID: 7400000, guid: ec23e838ffda4ff43969b6225373a17b, type: 2}
   - {fileID: 7400000, guid: 84e5df1c031e4734db531ed11ad053d5, type: 2}
   - {fileID: 7400000, guid: 66228c8156fa74541b5ef916ab29518a, type: 2}
+  runClipList:
+  - {fileID: 7400000, guid: e38a141f27330ea45b443031d86ec0e1, type: 2}
+  - {fileID: 7400000, guid: 0af3fe3f426d2ee4788780fca8a72e74, type: 2}
+  - {fileID: 7400000, guid: 286f1f9227bd6934e996502812fc6744, type: 2}
+  - {fileID: 7400000, guid: 13563ad87305c634986ba03785dcb925, type: 2}
 --- !u!95 &4350346840888672057
 Animator:
   serializedVersion: 4

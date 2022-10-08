@@ -5,6 +5,8 @@ public class InputManager : IManager
 {
     public void Init()
     {
+        isRun = false;
+        roleDirection = RoleDirection.None;
     }
 
     public void LocalUpdate(float dt)
@@ -13,43 +15,107 @@ public class InputManager : IManager
     }
 
     public event Action<RoleDirection> idleEvent;
-    public event Action<RoleDirection> moveEvent;
+    public event Action<RoleDirection, bool> moveEvent;
+
+    private bool isRun;
+    private RoleDirection roleDirection;
 
     private void CheckInput()
     {
-        if (Input.GetKeyDown(KeyCode.LeftArrow))
-        {
-            moveEvent?.Invoke(RoleDirection.Left);
-        }
-        else if (Input.GetKeyDown(KeyCode.RightArrow))
-        {
-            moveEvent?.Invoke(RoleDirection.Right);
-        }
-        else if (Input.GetKeyDown(KeyCode.DownArrow))
-        {
-            moveEvent?.Invoke(RoleDirection.Positive);
-        }
-        else if (Input.GetKeyDown(KeyCode.UpArrow))
-        {
-            moveEvent?.Invoke(RoleDirection.Back);
-        }
+        RoleIdleInput();
+        RoleRunInput();
+        RoleMoveInput();
+    }
 
-        if (Input.GetKeyUp(KeyCode.LeftArrow))
+    private void RoleIdleInput()
+    {
+        if (Input.GetKeyUp(KeyCode.A))
         {
             idleEvent?.Invoke(RoleDirection.Left);
+            roleDirection = RoleDirection.None;
         }
-        else if (Input.GetKeyUp(KeyCode.RightArrow))
+
+        if (Input.GetKeyUp(KeyCode.D))
         {
             idleEvent?.Invoke(RoleDirection.Right);
+            roleDirection = RoleDirection.None;
         }
-        else if (Input.GetKeyUp(KeyCode.DownArrow))
+
+        if (Input.GetKeyUp(KeyCode.S))
         {
             idleEvent?.Invoke(RoleDirection.Positive);
+            roleDirection = RoleDirection.None;
         }
-        else if (Input.GetKeyUp(KeyCode.UpArrow))
+
+        if (Input.GetKeyUp(KeyCode.W))
         {
             idleEvent?.Invoke(RoleDirection.Back);
+            roleDirection = RoleDirection.None;
         }
-        // TODO: 非编辑器下的移动逻辑
+    }
+
+    private void RoleMoveInput()
+    {
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            moveEvent?.Invoke(RoleDirection.Left, isRun);
+            roleDirection = RoleDirection.Left;
+        }
+
+        if (Input.GetKeyDown(KeyCode.D))
+        {
+            moveEvent?.Invoke(RoleDirection.Right, isRun);
+            roleDirection = RoleDirection.Right;
+        }
+
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            moveEvent?.Invoke(RoleDirection.Positive, isRun);
+            roleDirection = RoleDirection.Positive;
+        }
+
+        if (Input.GetKeyDown(KeyCode.W))
+        {
+            moveEvent?.Invoke(RoleDirection.Back, isRun);
+            roleDirection = RoleDirection.Back;
+        }
+    }
+
+    private void RoleRunInput()
+    {
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            isRun = true;
+            SwitchRunState();
+        }
+
+        if (Input.GetKeyUp(KeyCode.LeftShift))
+        {
+            isRun = false;
+            SwitchRunState();
+        }
+    }
+
+    private void SwitchRunState()
+    {
+        if (roleDirection == RoleDirection.Positive)
+        {
+            moveEvent?.Invoke(RoleDirection.Positive, isRun);
+        }
+
+        if (roleDirection == RoleDirection.Back)
+        {
+            moveEvent?.Invoke(RoleDirection.Back, isRun);
+        }
+
+        if (roleDirection == RoleDirection.Left)
+        {
+            moveEvent?.Invoke(RoleDirection.Left, isRun);
+        }
+
+        if (roleDirection == RoleDirection.Right)
+        {
+            moveEvent?.Invoke(RoleDirection.Right, isRun);
+        }
     }
 }

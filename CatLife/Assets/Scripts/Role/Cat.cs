@@ -9,9 +9,11 @@ public class Cat : BaseRole
 {
     [SerializeField] private List<AnimationClip> idleClipList;
     [SerializeField] private List<AnimationClip> moveClipList;
+    [SerializeField] private List<AnimationClip> runClipList;
     private Animator animator;
     private PlayableGraph playableGraph;
     private readonly float moveSpeed = 1.5f;
+    private readonly float runSpeed = 3.0f;
 
     public override void Init()
     {
@@ -39,7 +41,7 @@ public class Cat : BaseRole
             return;
         }
 
-        float moveDis = dt * moveSpeed;
+        float moveDis = isRun ? dt * runSpeed : dt * moveSpeed;
         if (roleDirection == RoleDirection.Left)
         {
             transform.localPosition -= new Vector3(moveDis, 0, 0);
@@ -58,14 +60,26 @@ public class Cat : BaseRole
         }
     }
 
-    private void RoleMoveAni(RoleDirection direction)
+    private bool isRun;
+
+    private void RoleMoveAni(RoleDirection direction, bool isRun)
     {
         if (playableGraph.IsValid())
         {
             playableGraph.Destroy();
         }
 
-        AnimationPlayableUtilities.PlayClip(animator, moveClipList[(int)direction], out playableGraph);
+        this.isRun = isRun;
+
+        if (isRun)
+        {
+            AnimationPlayableUtilities.PlayClip(animator, runClipList[(int)direction], out playableGraph);
+        }
+        else
+        {
+            AnimationPlayableUtilities.PlayClip(animator, moveClipList[(int)direction], out playableGraph);
+        }
+
         roleDirection = direction;
     }
 
