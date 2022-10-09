@@ -12,7 +12,6 @@ public static class Providers
             {
                 // 项目中自定义的服务提供者
                 new ProviderAssetsModule(),
-                new ProviderDataManager(),
                 new ProviderObjectPoolModule(),
                 new ProviderRoleManager(),
                 new ProviderInputManager(),

@@ -1,8 +1,9 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using LitJson;
 using UnityEngine;
 
-public class DataManager : IManager
+public class DataManager : MonoBehaviour, IManager
 {
     private PlayerData playerData;
 
@@ -60,5 +61,17 @@ public class DataManager : IManager
 
         string dataJson = File.ReadAllText(dataFilePath);
         playerData = JsonMapper.ToObject<PlayerData>(dataJson);
+    }
+
+    private void OnApplicationPause(bool pauseStatus)
+    {
+        if (pauseStatus)
+        {
+            SerializeData();
+        }
+        else
+        {
+            // TODO: 回到前台
+        }
     }
 }

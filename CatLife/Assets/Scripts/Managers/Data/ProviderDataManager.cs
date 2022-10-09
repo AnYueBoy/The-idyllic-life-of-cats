@@ -1,6 +1,7 @@
 ﻿using BitFramework.Core;
+using UnityEngine;
 
-public class ProviderDataManager : IServiceProvider
+public class ProviderDataManager : MonoBehaviour, IServiceProvider
 {
     public void Init()
     {
