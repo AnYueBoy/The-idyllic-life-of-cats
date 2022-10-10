@@ -8,7 +8,6 @@ public class ProviderNodeManager : MonoBehaviour, IServiceProvider
     public void Init()
     {
         App.Make<NodeManager>().Inject(worldUITrans);
-        App.Make<NodeManager>().Init();
     }
 
     public void Register()

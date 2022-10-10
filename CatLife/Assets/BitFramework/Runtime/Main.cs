@@ -16,6 +16,9 @@ public class Main : Framework
         // Cat cat = catNode.GetComponent<Cat>();
         // cat.Init();
         // App.Make<RoleManager>().AddRole(cat);
+
+        // 创建启动完成，初始化GameManager
+        App.Make<GameManager>().Init();
     }
 
     protected override IBootstrap[] GetBootstraps()
@@ -26,8 +29,6 @@ public class Main : Framework
     private void Update()
     {
         float dt = Time.deltaTime;
-        App.Make<DataManager>().LocalUpdate(dt);
-        App.Make<InputManager>().LocalUpdate(dt);
-        App.Make<RoleManager>().LocalUpdate(dt);
+        App.Make<GameManager>().LocalUpdate(dt);
     }
 }

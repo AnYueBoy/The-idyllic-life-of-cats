@@ -7,7 +7,6 @@ public class ProviderDataManager : MonoBehaviour, IServiceProvider
 {
     public void Init()
     {
-        App.Make<DataManager>().Init();
     }
 
     public void Register()
