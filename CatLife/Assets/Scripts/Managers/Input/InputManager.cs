@@ -9,6 +9,7 @@ public class InputManager : IManager
     {
         isRun = false;
         roleDirection = RoleDirection.None;
+        CreateMouseNode();
     }
 
     public void LocalUpdate(float dt)
@@ -131,28 +132,26 @@ public class InputManager : IManager
 
     private void CheckMouseInput()
     {
-        var mousePos = Input.mousePosition;
-        var worldPos = Camera.main.ScreenToWorldPoint(mousePos);
-        var mouseRender = GetMouseRender();
-        mouseRender.transform.position = new Vector3(worldPos.x, worldPos.y, 0);
-        if (mouseRender.sprite == null)
-        {
-            var mouseSpriteAssets = App.Make<IAssetsManager>().GetAssetByUrlSync<Sprite>("UI/Mouse/ArrowMouse");
-            mouseRender.sprite = mouseSpriteAssets;
-        }
+        MouseMove();
     }
 
-    private SpriteRenderer mouseRender;
-
-    private SpriteRenderer GetMouseRender()
+    private void MouseMove()
     {
-        if (mouseRender == null)
-        {
-            mouseRender = new GameObject("MouseRender").AddComponent<SpriteRenderer>();
-        }
-
-        return mouseRender;
+        var mousePos = Input.mousePosition;
+        var worldPos = Camera.main.ScreenToWorldPoint(mousePos);
+        mouseRender.transform.position = new Vector3(worldPos.x, worldPos.y, 0);
     }
 
     #endregion
+
+    private SpriteRenderer mouseRender;
+
+    private void CreateMouseNode()
+    {
+        mouseRender = new GameObject("MouseRender").AddComponent<SpriteRenderer>();
+        mouseRender.transform.SetParent(App.Make<NodeManager>().WorldUITrans);
+        mouseRender.transform.position = Vector3.one * 10000;
+        var mouseSpriteAssets = App.Make<IAssetsManager>().GetAssetByUrlSync<Sprite>(AssetsPath.MouseArrowPath);
+        mouseRender.sprite = mouseSpriteAssets;
+    }
 }
