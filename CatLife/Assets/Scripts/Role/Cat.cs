@@ -66,20 +66,25 @@ public class Cat : BaseRole
         // 分解水平垂直移动方向来决定动画移动方向
         Vector3 directVec = targetPos - transform.position;
 
+        RoleDirection curRoleDir;
         // 使用水平方向
         if (Mathf.Abs(directVec.x) > Mathf.Abs(directVec.y))
         {
-            roleDirection = directVec.x > 0 ? RoleDirection.Right : RoleDirection.Left;
+            curRoleDir = directVec.x > 0 ? RoleDirection.Right : RoleDirection.Left;
         }
         else
         {
             // 使用垂直方向
-            roleDirection = directVec.y > 0 ? RoleDirection.Back : RoleDirection.Positive;
+            curRoleDir = directVec.y > 0 ? RoleDirection.Back : RoleDirection.Positive;
         }
 
         moveDir = directVec.normalized;
 
-        RoleMoveAni();
+        if (curRoleDir != roleDirection)
+        {
+            roleDirection = curRoleDir;
+            RoleMoveAni();
+        }
     }
 
     private void RunKeyCallback(bool isRun)
