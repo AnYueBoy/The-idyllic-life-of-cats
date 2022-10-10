@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using BitFramework.Core;
 using UnityEngine;
@@ -12,8 +11,8 @@ public class Cat : BaseRole
     [SerializeField] private List<AnimationClip> runClipList;
     private Animator animator;
     private PlayableGraph playableGraph;
-    private readonly float moveSpeed = 1.5f;
-    private readonly float runSpeed = 3.0f;
+    private readonly float moveSpeed = 3f;
+    private readonly float runSpeed = 6f;
 
     public override void Init()
     {
@@ -22,82 +21,104 @@ public class Cat : BaseRole
 
     private void OnEnable()
     {
-        // 注册相关事件 
-        App.Make<InputManager>().idleEvent += RoleIdleAni;
-        App.Make<InputManager>().moveEvent += RoleMoveAni;
+        // 注册鼠标移动事件
+        App.Make<InputManager>().mouseMoveEvent += MouseMoveEnd;
     }
 
     public override void LocalUpdate(float dt)
     {
-        RoleMoveLogic(dt);
+        MouseRoleMoveLogic(dt);
     }
 
     private RoleDirection roleDirection = RoleDirection.None;
 
-    private void RoleMoveLogic(float dt)
+    #region 鼠标移动
+
+    private void MouseRoleMoveLogic(float dt)
     {
-        if (roleDirection == RoleDirection.None)
+        if (transform.position.Equals(targetPos))
         {
             return;
         }
 
-        float moveDis = isRun ? dt * runSpeed : dt * moveSpeed;
-        if (roleDirection == RoleDirection.Left)
+        float curMoveSpeed = isRun ? runSpeed : moveSpeed;
+        float moveDis = curMoveSpeed * dt;
+        float leftMoveDir = (transform.position - targetPos).magnitude;
+        if (moveDis > leftMoveDir)
         {
-            transform.localPosition -= new Vector3(moveDis, 0, 0);
+            transform.position = targetPos;
+            RoleIdleAni();
+            return;
         }
-        else if (roleDirection == RoleDirection.Right)
+
+        Vector3 nextMovePos = transform.position + moveDir * moveDis;
+        transform.position = nextMovePos;
+    }
+
+    private Vector3 targetPos;
+    private Vector3 moveDir;
+
+    private void MouseMoveEnd(Vector3 endPos)
+    {
+        targetPos = endPos;
+        // 分解水平垂直移动方向来决定动画移动方向
+        Vector3 directVec = targetPos - transform.position;
+
+        // 使用水平方向
+        if (Mathf.Abs(directVec.x) > Mathf.Abs(directVec.y))
         {
-            transform.localPosition += new Vector3(moveDis, 0, 0);
-        }
-        else if (roleDirection == RoleDirection.Back)
-        {
-            transform.localPosition += new Vector3(0, moveDis, 0);
+            roleDirection = directVec.x > 0 ? RoleDirection.Right : RoleDirection.Left;
         }
         else
         {
-            transform.localPosition -= new Vector3(0, moveDis, 0);
+            // 使用垂直方向
+            roleDirection = directVec.y > 0 ? RoleDirection.Back : RoleDirection.Positive;
         }
+
+        moveDir = directVec.normalized;
+
+        RoleMoveAni();
     }
+
+    #endregion
+
+    #region 动画播放
 
     private bool isRun;
 
-    private void RoleMoveAni(RoleDirection direction, bool isRun)
+    private void RoleMoveAni()
     {
         if (playableGraph.IsValid())
         {
             playableGraph.Destroy();
         }
-
-        this.isRun = isRun;
 
         if (isRun)
         {
-            AnimationPlayableUtilities.PlayClip(animator, runClipList[(int)direction], out playableGraph);
+            AnimationPlayableUtilities.PlayClip(animator, runClipList[(int)roleDirection], out playableGraph);
         }
         else
         {
-            AnimationPlayableUtilities.PlayClip(animator, moveClipList[(int)direction], out playableGraph);
+            AnimationPlayableUtilities.PlayClip(animator, moveClipList[(int)roleDirection], out playableGraph);
         }
-
-        roleDirection = direction;
     }
 
-    private void RoleIdleAni(RoleDirection direction)
+    private void RoleIdleAni()
     {
         if (playableGraph.IsValid())
         {
             playableGraph.Destroy();
         }
 
-        AnimationPlayableUtilities.PlayClip(animator, idleClipList[(int)direction], out playableGraph);
+        AnimationPlayableUtilities.PlayClip(animator, idleClipList[(int)roleDirection], out playableGraph);
         roleDirection = RoleDirection.None;
     }
 
+    #endregion
+
     private void OnDisable()
     {
-        App.Make<InputManager>().idleEvent -= RoleIdleAni;
-        App.Make<InputManager>().moveEvent -= RoleMoveAni;
+        App.Make<InputManager>().mouseMoveEvent -= MouseMoveEnd;
     }
 
     private void OnDestroy()
