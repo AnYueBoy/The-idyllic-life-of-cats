@@ -11,8 +11,8 @@ public class Cat : BaseRole
     [SerializeField] private List<AnimationClip> runClipList;
     private Animator animator;
     private PlayableGraph playableGraph;
-    private readonly float moveSpeed = 3f;
-    private readonly float runSpeed = 6f;
+    private readonly float moveSpeed = 2f;
+    private readonly float runSpeed = 3f;
 
     public override void Init()
     {
@@ -22,7 +22,8 @@ public class Cat : BaseRole
     private void OnEnable()
     {
         // 注册鼠标移动事件
-        App.Make<InputManager>().mouseMoveEvent += MouseMoveEnd;
+        App.Make<InputManager>().moveEvent += MouseClickCallback;
+        App.Make<InputManager>().runEvent += RunKeyCallback;
     }
 
     public override void LocalUpdate(float dt)
@@ -58,7 +59,7 @@ public class Cat : BaseRole
     private Vector3 targetPos;
     private Vector3 moveDir;
 
-    private void MouseMoveEnd(Vector3 endPos)
+    private void MouseClickCallback(Vector3 endPos)
     {
         targetPos = endPos;
         // 分解水平垂直移动方向来决定动画移动方向
@@ -76,6 +77,17 @@ public class Cat : BaseRole
         }
 
         moveDir = directVec.normalized;
+
+        RoleMoveAni();
+    }
+
+    private void RunKeyCallback(bool isRun)
+    {
+        this.isRun = isRun;
+        if (roleDirection == RoleDirection.None)
+        {
+            return;
+        }
 
         RoleMoveAni();
     }
@@ -118,7 +130,8 @@ public class Cat : BaseRole
 
     private void OnDisable()
     {
-        App.Make<InputManager>().mouseMoveEvent -= MouseMoveEnd;
+        App.Make<InputManager>().moveEvent -= MouseClickCallback;
+        App.Make<InputManager>().runEvent -= RunKeyCallback;
     }
 
     private void OnDestroy()

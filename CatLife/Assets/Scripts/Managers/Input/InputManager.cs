@@ -7,8 +7,6 @@ public class InputManager : IManager
 {
     public void Init()
     {
-        isRun = false;
-        roleDirection = RoleDirection.None;
         CreateMouseNode();
     }
 
@@ -18,29 +16,26 @@ public class InputManager : IManager
         CheckMouseInput();
     }
 
-    public event Action<Vector3> mouseMoveEvent;
-
-    private bool isRun;
-    private RoleDirection roleDirection;
-
+    public event Action<Vector3> moveEvent;
+    public event Action<bool> runEvent;
 
     #region 键盘输入
 
     private void CheckKeyboardInput()
     {
-        RoleRunInput();
+        RunInput();
     }
 
-    private void RoleRunInput()
+    private void RunInput()
     {
         if (Input.GetKeyDown(KeyCode.LeftShift))
         {
-            isRun = true;
+            runEvent?.Invoke(true);
         }
 
         if (Input.GetKeyUp(KeyCode.LeftShift))
         {
-            isRun = false;
+            runEvent?.Invoke(false);
         }
     }
 
@@ -70,7 +65,7 @@ public class InputManager : IManager
             var mousePos = Input.mousePosition;
             targetPos = Camera.main.ScreenToWorldPoint(mousePos);
             targetPos.z = 0;
-            mouseMoveEvent?.Invoke(targetPos);
+            moveEvent?.Invoke(targetPos);
         }
     }
 
