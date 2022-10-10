@@ -1,4 +1,6 @@
 ﻿using System;
+using BitFramework.Component.AssetsModule;
+using BitFramework.Core;
 using UnityEngine;
 
 public class InputManager : IManager
@@ -11,7 +13,8 @@ public class InputManager : IManager
 
     public void LocalUpdate(float dt)
     {
-        CheckInput();
+        CheckKeyboardInput();
+        CheckMouseInput();
     }
 
     public event Action<RoleDirection> idleEvent;
@@ -20,14 +23,15 @@ public class InputManager : IManager
     private bool isRun;
     private RoleDirection roleDirection;
 
-    private void CheckInput()
+
+    #region 键盘输入
+
+    private void CheckKeyboardInput()
     {
         RoleIdleInput();
         RoleRunInput();
         RoleMoveInput();
     }
-
-    #region 键盘输入
 
     private void RoleIdleInput()
     {
@@ -125,6 +129,30 @@ public class InputManager : IManager
 
     #region 鼠标输入
 
-    
+    private void CheckMouseInput()
+    {
+        var mousePos = Input.mousePosition;
+        var worldPos = Camera.main.ScreenToWorldPoint(mousePos);
+        var mouseRender = GetMouseRender();
+        mouseRender.transform.position = new Vector3(worldPos.x, worldPos.y, 0);
+        if (mouseRender.sprite == null)
+        {
+            var mouseSpriteAssets = App.Make<IAssetsManager>().GetAssetByUrlSync<Sprite>("UI/Mouse/ArrowMouse");
+            mouseRender.sprite = mouseSpriteAssets;
+        }
+    }
+
+    private SpriteRenderer mouseRender;
+
+    private SpriteRenderer GetMouseRender()
+    {
+        if (mouseRender == null)
+        {
+            mouseRender = new GameObject("MouseRender").AddComponent<SpriteRenderer>();
+        }
+
+        return mouseRender;
+    }
+
     #endregion
 }

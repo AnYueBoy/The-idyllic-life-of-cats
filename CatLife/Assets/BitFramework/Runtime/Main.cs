@@ -11,11 +11,11 @@ public class Main : Framework
     protected override void OnStartCompleted(IApplication application, StartCompletedEventArgs args)
     {
         // 框架完成
-        GameObject catPrefab = App.Make<IAssetsManager>().GetAssetByUrlSync<GameObject>("Cat");
-        GameObject catNode = App.Make<IObjectPool>().RequestInstance(catPrefab);
-        Cat cat = catNode.GetComponent<Cat>();
-        cat.Init();
-        App.Make<RoleManager>().AddRole(cat);
+        // GameObject catPrefab = App.Make<IAssetsManager>().GetAssetByUrlSync<GameObject>("Cat");
+        // GameObject catNode = App.Make<IObjectPool>().RequestInstance(catPrefab);
+        // Cat cat = catNode.GetComponent<Cat>();
+        // cat.Init();
+        // App.Make<RoleManager>().AddRole(cat);
     }
 
     protected override IBootstrap[] GetBootstraps()

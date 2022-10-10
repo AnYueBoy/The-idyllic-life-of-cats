@@ -4,7 +4,6 @@ public class NodeManager : IManager
 {
     private Transform worldUITrans;
 
-
     public void Inject(Transform worldUITrans)
     {
         this.worldUITrans = worldUITrans;
@@ -12,6 +11,7 @@ public class NodeManager : IManager
 
     public void Init()
     {
+        
     }
 
     public void LocalUpdate(float dt)
