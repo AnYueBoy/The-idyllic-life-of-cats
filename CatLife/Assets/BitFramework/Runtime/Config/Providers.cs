@@ -15,6 +15,7 @@ public static class Providers
                 new ProviderObjectPoolModule(),
                 new ProviderRoleManager(),
                 new ProviderInputManager(),
+                new ProviderSpawnManager()
             };
         }
     }

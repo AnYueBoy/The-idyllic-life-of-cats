@@ -80,6 +80,6 @@ public class InputManager : IManager
         mouseRender.transform.position = Vector3.one * 10000;
         var mouseSpriteAssets = App.Make<IAssetsManager>().GetAssetByUrlSync<Sprite>(AssetsPath.MouseArrowPath);
         mouseRender.sprite = mouseSpriteAssets;
-        mouseRender.sortingOrder = SortLayer.WorldUI;
+        mouseRender.sortingOrder = SortLayer.WorldUILayer;
     }
 }

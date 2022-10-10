@@ -8,6 +8,9 @@ public class GameManager : IManager
         App.Make<InputManager>().Init();
         App.Make<RoleManager>().Init();
         App.Make<NodeManager>().Init();
+        App.Make<SpawnManager>().Init();
+
+        App.Make<SpawnManager>().SpawnCat();
     }
 
     public void LocalUpdate(float dt)
@@ -16,5 +19,6 @@ public class GameManager : IManager
         App.Make<InputManager>().LocalUpdate(dt);
         App.Make<RoleManager>().LocalUpdate(dt);
         App.Make<NodeManager>().LocalUpdate(dt);
+        App.Make<SpawnManager>().LocalUpdate(dt);
     }
 }

@@ -17,6 +17,7 @@ public class Cat : BaseRole
     public override void Init()
     {
         animator ??= GetComponent<Animator>();
+        GetComponent<SpriteRenderer>().sortingOrder = SortLayer.RoleLayer;
     }
 
     private void OnEnable()
@@ -107,11 +108,11 @@ public class Cat : BaseRole
 
         if (isRun)
         {
-            AnimationPlayableUtilities.PlayClip(animator, runClipList[(int)roleDirection], out playableGraph);
+            AnimationPlayableUtilities.PlayClip(animator, runClipList[(int) roleDirection], out playableGraph);
         }
         else
         {
-            AnimationPlayableUtilities.PlayClip(animator, moveClipList[(int)roleDirection], out playableGraph);
+            AnimationPlayableUtilities.PlayClip(animator, moveClipList[(int) roleDirection], out playableGraph);
         }
     }
 
@@ -122,7 +123,7 @@ public class Cat : BaseRole
             playableGraph.Destroy();
         }
 
-        AnimationPlayableUtilities.PlayClip(animator, idleClipList[(int)roleDirection], out playableGraph);
+        AnimationPlayableUtilities.PlayClip(animator, idleClipList[(int) roleDirection], out playableGraph);
         roleDirection = RoleDirection.None;
     }
 
