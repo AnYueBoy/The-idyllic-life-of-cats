@@ -27,6 +27,8 @@ public class InputManager : IManager
         RoleMoveInput();
     }
 
+    #region 键盘输入
+
     private void RoleIdleInput()
     {
         if (Input.GetKeyUp(KeyCode.A))
@@ -118,4 +120,11 @@ public class InputManager : IManager
             moveEvent?.Invoke(RoleDirection.Right, isRun);
         }
     }
+
+    #endregion
+
+    #region 鼠标输入
+
+    
+    #endregion
 }
