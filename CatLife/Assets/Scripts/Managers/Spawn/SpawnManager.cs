@@ -25,4 +25,14 @@ public class SpawnManager : IManager
 
         return cat;
     }
+
+    public Map SpawnMap()
+    {
+        GameObject mapPrefab = App.Make<IAssetsManager>().GetAssetByUrlSync<GameObject>(AssetsPath.Map1Path);
+        GameObject mapNode = App.Make<IObjectPool>().RequestInstance(mapPrefab);
+        mapNode.transform.SetParent(App.Make<NodeManager>().MapLayerTrans);
+
+        Map map = mapNode.GetComponent<Map>();
+        return map;
+    }
 }
