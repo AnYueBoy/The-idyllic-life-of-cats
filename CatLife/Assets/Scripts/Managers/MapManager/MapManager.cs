@@ -66,7 +66,13 @@ public class MapManager : IManager
     private Vector3 GetPosByTileIndex(int x, int y)
     {
         Vector3Int tileIndex = new Vector3Int(x, y, 0);
-        var pos = curMap.GroundTileMap.CellToLocal(tileIndex);
+        // 返回的是格子左下角坐标
+        var pos = curMap.GroundTileMap.CellToWorld(tileIndex);
+
+        // 将坐标转换为格子中心点坐标
+        var cellSize = curMap.GroundTileMap.layoutGrid.cellSize;
+        pos.x += cellSize.x / 2;
+        pos.y += cellSize.y / 2;
         return pos;
     }
 
@@ -81,7 +87,7 @@ public class MapManager : IManager
     {
         var endCellIndex = curMap.GroundTileMap.WorldToCell(endPos);
         var startCellIndex = curMap.GroundTileMap.WorldToCell(startPos);
-        
+
         var startNodeArrayIndex = ConvertTileIndexToCellIndex(startCellIndex.x, startCellIndex.y);
         var endNodeArrayIndex = ConvertTileIndexToCellIndex(endCellIndex.x, endCellIndex.y);
         return pathFinding.FindPath(startNodeArrayIndex, endNodeArrayIndex);

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class NodeManager : IManager
 {
@@ -6,12 +7,15 @@ public class NodeManager : IManager
     private Transform roleLayerTrans;
     private Transform mapLayerTrans;
 
+    public Tile pathTile;
 
-    public void Inject(Transform worldUITrans, Transform roleLayerTrans, Transform mapLayerTrans)
+
+    public void Inject(Transform worldUITrans, Transform roleLayerTrans, Transform mapLayerTrans,Tile pathTile)
     {
         this.worldUITrans = worldUITrans;
         this.roleLayerTrans = roleLayerTrans;
         this.mapLayerTrans = mapLayerTrans;
+        this.pathTile = pathTile;
     }
 
     public void Init()
