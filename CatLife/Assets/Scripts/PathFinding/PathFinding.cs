@@ -16,7 +16,6 @@ public class PathFinding
 
     public List<Vector3> FindPath(Vector2Int startTileIndex, Vector2Int endTileIndex)
     {
-        Debug.Log($"isObstacle:{nodeCellArray[endTileIndex.x, endTileIndex.y].isObstacle}");
         return FindPath(nodeCellArray[startTileIndex.x, startTileIndex.y],
             nodeCellArray[endTileIndex.x, endTileIndex.y]);
     }
