@@ -16,6 +16,7 @@ public class PathFinding
 
     public List<Vector3> FindPath(Vector2Int startTileIndex, Vector2Int endTileIndex)
     {
+        Debug.Log($"isObstacle:{nodeCellArray[endTileIndex.x, endTileIndex.y].isObstacle}");
         return FindPath(nodeCellArray[startTileIndex.x, startTileIndex.y],
             nodeCellArray[endTileIndex.x, endTileIndex.y]);
     }
@@ -79,7 +80,7 @@ public class PathFinding
         List<NodeCell> neighbours = new List<NodeCell>();
         for (int i = -1; i <= 1; i++)
         {
-            for (int j = 0; j <= 1; j++)
+            for (int j = -1; j <= 1; j++)
             {
                 if (i == 0 && j == 0)
                 {
@@ -87,13 +88,13 @@ public class PathFinding
                 }
 
                 int x = nodeCell.x + i;
-                if (x < 0 || x > horizontalValue)
+                if (x < 0 || x >= horizontalValue)
                 {
                     continue;
                 }
 
                 int y = nodeCell.y + j;
-                if (y < 0 || y > verticalValue)
+                if (y < 0 || y >= verticalValue)
                 {
                     continue;
                 }
