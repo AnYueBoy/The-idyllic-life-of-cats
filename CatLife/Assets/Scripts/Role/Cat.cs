@@ -38,10 +38,12 @@ public class Cat : BaseRole
 
     private void MouseRoleMoveLogic(float dt)
     {
-        if (transform.position.Equals(targetPos))
+        if (movePosList == null || movePosList.Count <= 0 || moveIndex >= movePosList.Count)
         {
             return;
         }
+
+        Vector3 targetPos = movePosList[moveIndex];
 
         float curMoveSpeed = isRun ? runSpeed : moveSpeed;
         float moveDis = curMoveSpeed * dt;
@@ -49,7 +51,16 @@ public class Cat : BaseRole
         if (moveDis > leftMoveDir)
         {
             transform.position = targetPos;
-            RoleIdleAni();
+            moveIndex++;
+            if (moveIndex >= movePosList.Count)
+            {
+                RoleIdleAni();
+            }
+            else
+            {
+                RefreshDirAndAni();
+            }
+
             return;
         }
 
@@ -57,12 +68,22 @@ public class Cat : BaseRole
         transform.position = nextMovePos;
     }
 
-    private Vector3 targetPos;
     private Vector3 moveDir;
+
+    private List<Vector3> movePosList;
+    private int moveIndex;
 
     private void MouseClickCallback(Vector3 endPos)
     {
-        targetPos = endPos;
+        movePosList = App.Make<MapManager>().FindPath(transform.position, endPos);
+        moveIndex = 0;
+        RefreshDirAndAni();
+    }
+
+    private void RefreshDirAndAni()
+    {
+        var targetPos = movePosList[moveIndex];
+
         // 分解水平垂直移动方向来决定动画移动方向
         Vector3 directVec = targetPos - transform.position;
 
@@ -113,11 +134,11 @@ public class Cat : BaseRole
 
         if (isRun)
         {
-            AnimationPlayableUtilities.PlayClip(animator, runClipList[(int) roleDirection], out playableGraph);
+            AnimationPlayableUtilities.PlayClip(animator, runClipList[(int)roleDirection], out playableGraph);
         }
         else
         {
-            AnimationPlayableUtilities.PlayClip(animator, moveClipList[(int) roleDirection], out playableGraph);
+            AnimationPlayableUtilities.PlayClip(animator, moveClipList[(int)roleDirection], out playableGraph);
         }
     }
 
@@ -128,7 +149,7 @@ public class Cat : BaseRole
             playableGraph.Destroy();
         }
 
-        AnimationPlayableUtilities.PlayClip(animator, idleClipList[(int) roleDirection], out playableGraph);
+        AnimationPlayableUtilities.PlayClip(animator, idleClipList[(int)roleDirection], out playableGraph);
         roleDirection = RoleDirection.None;
     }
 

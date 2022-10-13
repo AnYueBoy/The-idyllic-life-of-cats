@@ -14,7 +14,7 @@ public class PathFinding
         this.nodeCellArray = nodeCellArray;
     }
 
-    public List<Vector3> FindPath(Vector3Int startTileIndex, Vector3Int endTileIndex)
+    public List<Vector3> FindPath(Vector2Int startTileIndex, Vector2Int endTileIndex)
     {
         return FindPath(nodeCellArray[startTileIndex.x, startTileIndex.y],
             nodeCellArray[endTileIndex.x, endTileIndex.y]);
@@ -87,13 +87,13 @@ public class PathFinding
                 }
 
                 int x = nodeCell.x + i;
-                if (x <= 0 || x > horizontalValue)
+                if (x < 0 || x > horizontalValue)
                 {
                     continue;
                 }
 
                 int y = nodeCell.y + j;
-                if (y <= 0 || y > verticalValue)
+                if (y < 0 || y > verticalValue)
                 {
                     continue;
                 }

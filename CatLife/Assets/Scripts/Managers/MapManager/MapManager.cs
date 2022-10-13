@@ -1,4 +1,5 @@
-﻿using BitFramework.Core;
+﻿using System.Collections.Generic;
+using BitFramework.Core;
 using UnityEngine;
 
 public class MapManager : IManager
@@ -21,13 +22,15 @@ public class MapManager : IManager
 
     private Map curMap;
     private PathFinding pathFinding;
+    private int horizontalValue;
+    private int verticalValue;
 
     private void ScanMapInfo()
     {
         var leftBottomIndex = curMap.GroundTileMap.origin;
 
-        var horizontalValue = Mathf.Abs(leftBottomIndex.x);
-        var verticalValue = Mathf.Abs(leftBottomIndex.y);
+        horizontalValue = leftBottomIndex.x * leftBottomIndex.x;
+        verticalValue = leftBottomIndex.y * leftBottomIndex.y;
         var mapNodeCellArray = new NodeCell[horizontalValue, verticalValue];
         for (int x = leftBottomIndex.x; x <= Mathf.Abs(leftBottomIndex.x); x++)
         {
@@ -35,7 +38,10 @@ public class MapManager : IManager
             {
                 bool isObstacle = IsObstacle(x, y);
                 Vector3 pos = GetPosByTileIndex(x, y);
-                mapNodeCellArray[x, y] = new NodeCell(isObstacle, pos, x, y);
+
+                Vector2Int nodeCellIndex = ConvertTileIndexToCellIndex(x, y);
+                mapNodeCellArray[nodeCellIndex.x, nodeCellIndex.y] =
+                    new NodeCell(isObstacle, pos, nodeCellIndex.x, nodeCellIndex.y);
             }
         }
 
@@ -63,5 +69,25 @@ public class MapManager : IManager
         Vector3Int tileIndex = new Vector3Int(x, y, 0);
         var pos = curMap.GroundTileMap.CellToLocal(tileIndex);
         return pos;
+    }
+
+    private Vector2Int ConvertTileIndexToCellIndex(int tileX, int tileY)
+    {
+        int x = tileX + (horizontalValue >> 1);
+        int y = tileY + (verticalValue >> 1);
+        return new Vector2Int(x, y);
+    }
+
+    public List<Vector3> FindPath(Vector3 startPos, Vector3 endPos)
+    {
+        var endLocalPos = curMap.GroundTileMap.WorldToLocal(endPos);
+        var endCellIndex = curMap.GroundTileMap.LocalToCell(endLocalPos);
+
+        var startLocalPos = curMap.GroundTileMap.WorldToCell(startPos);
+        var startCellIndex = curMap.GroundTileMap.LocalToCell(startLocalPos);
+
+        var startNodeArrayIndex = ConvertTileIndexToCellIndex(startCellIndex.x, startCellIndex.y);
+        var endNodeArrayIndex = ConvertTileIndexToCellIndex(endCellIndex.x, endCellIndex.y);
+        return pathFinding.FindPath(startNodeArrayIndex, endNodeArrayIndex);
     }
 }
