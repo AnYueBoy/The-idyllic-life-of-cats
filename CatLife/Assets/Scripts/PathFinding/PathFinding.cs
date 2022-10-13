@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using BitFramework.Core;
 using UnityEngine;
 
 public class PathFinding
@@ -113,6 +114,7 @@ public class PathFinding
     private List<Vector3> GeneratePath(NodeCell startNode, NodeCell endNode)
     {
         List<Vector3> path = new List<Vector3>();
+        pathNodeList = new List<NodeCell>();
         if (endNode == null)
         {
             return path;
@@ -121,10 +123,18 @@ public class PathFinding
         while (endNode != startNode)
         {
             path.Add(endNode.pos);
+            pathNodeList.Add(endNode);
             endNode = endNode.parent;
         }
 
         path.Reverse();
+        pathNodeList.Reverse();
         return path;
+    }
+
+    private List<NodeCell> pathNodeList;
+    public List<NodeCell> GeneratePathCallback()
+    {
+        return pathNodeList;
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using BitFramework.Core;
 using UnityEngine;
 
@@ -24,6 +25,7 @@ public class MapManager : IManager
     private PathFinding pathFinding;
     private Vector3Int tileMapSize;
     private Vector3Int leftBottomIndex;
+    private Action<List<NodeCell>> pathGenerateCallback;
 
     private void ScanMapInfo()
     {
@@ -40,7 +42,7 @@ public class MapManager : IManager
 
                 Vector2Int nodeCellIndex = ConvertTileIndexToCellIndex(x, y);
                 mapNodeCellArray[nodeCellIndex.x, nodeCellIndex.y] =
-                    new NodeCell(isObstacle, pos, nodeCellIndex.x, nodeCellIndex.y);
+                    new NodeCell(isObstacle, pos, nodeCellIndex.x, nodeCellIndex.y, new Vector3Int(x, y, 0));
             }
         }
 
@@ -90,6 +92,24 @@ public class MapManager : IManager
 
         var startNodeArrayIndex = ConvertTileIndexToCellIndex(startCellIndex.x, startCellIndex.y);
         var endNodeArrayIndex = ConvertTileIndexToCellIndex(endCellIndex.x, endCellIndex.y);
-        return pathFinding.FindPath(startNodeArrayIndex, endNodeArrayIndex);
+        List<Vector3> pathPosList = pathFinding.FindPath(startNodeArrayIndex, endNodeArrayIndex);
+        List<NodeCell> pathNodeList = pathFinding.GeneratePathCallback();
+        DrawPath(pathNodeList);
+        return pathPosList;
+    }
+
+    private void DrawPath(List<NodeCell> pathNodeList)
+    {
+        if (pathNodeList == null || pathNodeList.Count <= 0)
+        {
+            return;
+        }
+        
+        curMap.FarmTileMap.ClearAllTiles();
+
+        foreach (NodeCell nodeCell in pathNodeList)
+        {
+            curMap.FarmTileMap.SetTile(nodeCell.mappingTileIndex, App.Make<NodeManager>().pathTile);
+        }
     }
 }

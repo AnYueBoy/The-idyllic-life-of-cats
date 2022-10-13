@@ -17,11 +17,14 @@ public class NodeCell
 
     public int FCost => gCost + hCost;
 
-    public NodeCell(bool isObstacle, Vector3 pos, int x, int y)
+    public Vector3Int mappingTileIndex;
+
+    public NodeCell(bool isObstacle, Vector3 pos, int x, int y, Vector3Int mappingTileIndex)
     {
         this.isObstacle = isObstacle;
         this.pos = pos;
         this.x = x;
         this.y = y;
+        this.mappingTileIndex = mappingTileIndex;
     }
 }
