@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8877391288607245722}
   - component: {fileID: 8877391288607245723}
+  - component: {fileID: 3277331403714326953}
   m_Layer: 0
   m_Name: Map2
   m_TagString: Untagged
@@ -45,6 +46,21 @@ Grid:
   m_CellGap: {x: 0, y: 0, z: 0}
   m_CellLayout: 0
   m_CellSwizzle: 0
+--- !u!114 &3277331403714326953
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8877391288607245720}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0965e9548b144acba258119896af4352, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  grid: {fileID: 0}
+  groundTileMap: {fileID: 8877391288655943664}
+  obstacleTileMap: {fileID: 8877391288655943664}
 --- !u!1 &8877391288655943671
 GameObject:
   m_ObjectHideFlags: 0

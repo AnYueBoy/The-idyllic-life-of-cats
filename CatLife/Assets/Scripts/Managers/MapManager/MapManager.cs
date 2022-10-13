@@ -22,19 +22,20 @@ public class MapManager : IManager
 
     private Map curMap;
     private PathFinding pathFinding;
-    private int horizontalValue;
-    private int verticalValue;
+    private Vector3Int tileMapSize;
+    private Vector3Int leftBottomIndex;
 
     private void ScanMapInfo()
     {
-        var leftBottomIndex = curMap.GroundTileMap.origin;
+        leftBottomIndex = curMap.GroundTileMap.origin;
+        Debug.Log($"origin pos: {leftBottomIndex}");
+        var value = curMap.GroundTileMap.CellToWorld(leftBottomIndex);
+        tileMapSize = curMap.GroundTileMap.size;
 
-        horizontalValue = leftBottomIndex.x * leftBottomIndex.x;
-        verticalValue = leftBottomIndex.y * leftBottomIndex.y;
-        var mapNodeCellArray = new NodeCell[horizontalValue, verticalValue];
-        for (int x = leftBottomIndex.x; x <= Mathf.Abs(leftBottomIndex.x); x++)
+        var mapNodeCellArray = new NodeCell[tileMapSize.x, tileMapSize.y];
+        for (int x = leftBottomIndex.x; x < leftBottomIndex.x + tileMapSize.x; x++)
         {
-            for (int y = leftBottomIndex.y; y <= Mathf.Abs(leftBottomIndex.y); y++)
+            for (int y = leftBottomIndex.y; y < leftBottomIndex.y + tileMapSize.y; y++)
             {
                 bool isObstacle = IsObstacle(x, y);
                 Vector3 pos = GetPosByTileIndex(x, y);
@@ -45,7 +46,7 @@ public class MapManager : IManager
             }
         }
 
-        pathFinding.Init(horizontalValue, verticalValue, mapNodeCellArray);
+        pathFinding.Init(tileMapSize.x, tileMapSize.y, mapNodeCellArray);
     }
 
     private bool IsObstacle(int x, int y)
@@ -73,8 +74,8 @@ public class MapManager : IManager
 
     private Vector2Int ConvertTileIndexToCellIndex(int tileX, int tileY)
     {
-        int x = tileX + (horizontalValue >> 1);
-        int y = tileY + (verticalValue >> 1);
+        int x = tileX + Mathf.Abs(leftBottomIndex.x);
+        int y = tileY + Mathf.Abs(leftBottomIndex.y);
         return new Vector2Int(x, y);
     }
 
