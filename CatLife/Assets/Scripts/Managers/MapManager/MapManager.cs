@@ -79,11 +79,8 @@ public class MapManager : IManager
 
     public List<Vector3> FindPath(Vector3 startPos, Vector3 endPos)
     {
-        var endLocalPos = curMap.GroundTileMap.WorldToLocal(endPos);
-        var endCellIndex = curMap.GroundTileMap.LocalToCell(endLocalPos);
-
-        var startLocalPos = curMap.GroundTileMap.WorldToCell(startPos);
-        var startCellIndex = curMap.GroundTileMap.LocalToCell(startLocalPos);
+        var endCellIndex = curMap.GroundTileMap.WorldToCell(endPos);
+        var startCellIndex = curMap.GroundTileMap.WorldToCell(startPos);
         
         var startNodeArrayIndex = ConvertTileIndexToCellIndex(startCellIndex.x, startCellIndex.y);
         var endNodeArrayIndex = ConvertTileIndexToCellIndex(endCellIndex.x, endCellIndex.y);
