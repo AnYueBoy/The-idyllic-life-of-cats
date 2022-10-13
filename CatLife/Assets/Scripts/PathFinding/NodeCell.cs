@@ -22,4 +22,11 @@ public class NodeCell
         this.pos = pos;
         this.index = index;
     }
+
+    public NodeCell(bool isObstacle, Vector3 pos, int x, int y)
+    {
+        this.isObstacle = isObstacle;
+        this.pos = pos;
+        index = new Vector2Int(x, y);
+    }
 }
