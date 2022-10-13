@@ -8,25 +8,20 @@ public class NodeCell
 
     public Vector3 pos;
 
-    public Vector2Int index;
-
     public int gCost;
 
     public int hCost;
 
-    public int FCost => gCost + hCost;
+    public int x;
+    public int y;
 
-    public NodeCell(bool isObstacle, Vector3 pos, Vector2Int index)
-    {
-        this.isObstacle = isObstacle;
-        this.pos = pos;
-        this.index = index;
-    }
+    public int FCost => gCost + hCost;
 
     public NodeCell(bool isObstacle, Vector3 pos, int x, int y)
     {
         this.isObstacle = isObstacle;
         this.pos = pos;
-        index = new Vector2Int(x, y);
+        this.x = x;
+        this.y = y;
     }
 }

@@ -5,6 +5,7 @@ public class MapManager : IManager
 {
     public void Init()
     {
+        pathFinding = new PathFinding();
         InitMap();
     }
 
@@ -19,7 +20,7 @@ public class MapManager : IManager
     }
 
     private Map curMap;
-    private NodeCell[,] mapNodeCellArray;
+    private PathFinding pathFinding;
 
     private void ScanMapInfo()
     {
@@ -27,7 +28,7 @@ public class MapManager : IManager
 
         var horizontalValue = Mathf.Abs(leftBottomIndex.x);
         var verticalValue = Mathf.Abs(leftBottomIndex.y);
-        mapNodeCellArray = new NodeCell[horizontalValue, verticalValue];
+        var mapNodeCellArray = new NodeCell[horizontalValue, verticalValue];
         for (int x = leftBottomIndex.x; x <= Mathf.Abs(leftBottomIndex.x); x++)
         {
             for (int y = leftBottomIndex.y; y <= Mathf.Abs(leftBottomIndex.y); y++)
@@ -37,6 +38,8 @@ public class MapManager : IManager
                 mapNodeCellArray[x, y] = new NodeCell(isObstacle, pos, x, y);
             }
         }
+
+        pathFinding.Init(horizontalValue, verticalValue, mapNodeCellArray);
     }
 
     private bool IsObstacle(int x, int y)
