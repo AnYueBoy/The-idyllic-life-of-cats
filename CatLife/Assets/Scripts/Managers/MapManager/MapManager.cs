@@ -28,8 +28,6 @@ public class MapManager : IManager
     private void ScanMapInfo()
     {
         leftBottomIndex = curMap.GroundTileMap.origin;
-        Debug.Log($"origin pos: {leftBottomIndex}");
-        var value = curMap.GroundTileMap.CellToWorld(leftBottomIndex);
         tileMapSize = curMap.GroundTileMap.size;
 
         var mapNodeCellArray = new NodeCell[tileMapSize.x, tileMapSize.y];
@@ -86,7 +84,7 @@ public class MapManager : IManager
 
         var startLocalPos = curMap.GroundTileMap.WorldToCell(startPos);
         var startCellIndex = curMap.GroundTileMap.LocalToCell(startLocalPos);
-
+        
         var startNodeArrayIndex = ConvertTileIndexToCellIndex(startCellIndex.x, startCellIndex.y);
         var endNodeArrayIndex = ConvertTileIndexToCellIndex(endCellIndex.x, endCellIndex.y);
         return pathFinding.FindPath(startNodeArrayIndex, endNodeArrayIndex);
