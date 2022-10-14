@@ -8,6 +8,23 @@ public class PathFinding
     private int horizontalValue;
     private int verticalValue;
 
+    private readonly List<Vector2Int> directionList = new List<Vector2Int>()
+    {
+        Vector2Int.left,
+        Vector2Int.right,
+        Vector2Int.down,
+        Vector2Int.up,
+
+        // 左下
+        new Vector2Int(-1, -1),
+        // 左上
+        new Vector2Int(-1, 1),
+        // 右下
+        new Vector2Int(1, -1),
+        // 右上
+        new Vector2Int(1, 1),
+    };
+
     public void Init(int horizontalValue, int verticalValue, NodeCell[,] nodeCellArray)
     {
         this.horizontalValue = horizontalValue;
@@ -106,6 +123,42 @@ public class PathFinding
         return neighbours;
     }
 
+    private IEnumerable<NodeCell> GetJPSNeighbours(NodeCell nodeCell)
+    {
+        if (nodeCell.parent == null)
+        {
+            // 返回八个方向的邻居迭代器
+            for (int i = 0; i < directionList.Count; i++)
+            {
+                int x = nodeCell.x + directionList[i].x;
+                int y = nodeCell.y + directionList[i].y;
+
+                if (IsCanReachable(x, y))
+                {
+                    yield return nodeCellArray[x, y];
+                }
+            }
+        }
+        else
+        {
+        }
+    }
+
+    private bool IsCanReachable(int x, int y)
+    {
+        if (x < 0 || x >= horizontalValue)
+        {
+            return false;
+        }
+
+        if (y < 0 || y >= verticalValue)
+        {
+            return false;
+        }
+
+        return nodeCellArray[x, y].isObstacle;
+    }
+
     private int GetManhattan(NodeCell curNode, NodeCell endCell)
     {
         return Mathf.Abs(endCell.x - curNode.x) * 10 + Mathf.Abs(endCell.y - curNode.y) * 10;
@@ -133,6 +186,7 @@ public class PathFinding
     }
 
     private List<NodeCell> pathNodeList;
+
     public List<NodeCell> GeneratePathCallback()
     {
         return pathNodeList;
