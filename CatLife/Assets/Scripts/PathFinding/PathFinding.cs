@@ -159,13 +159,13 @@ public class PathFinding
                 return Trace(curNode);
             }
 
-            IdentitySuccessors(curNode, startCell, endCell, openList, closeList);
+            IdentitySuccessors(curNode, endCell, openList, closeList);
         }
 
         return null;
     }
 
-    private void IdentitySuccessors(NodeCell curNode, NodeCell startNode, NodeCell endNode, List<NodeCell> openList,
+    private void IdentitySuccessors(NodeCell curNode, NodeCell endNode, List<NodeCell> openList,
         List<NodeCell> closeList)
     {
         foreach (var neighbour in GetJPSNeighbours(curNode))
