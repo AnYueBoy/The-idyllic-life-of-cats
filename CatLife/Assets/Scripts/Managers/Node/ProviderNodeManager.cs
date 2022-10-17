@@ -8,10 +8,11 @@ public class ProviderNodeManager : MonoBehaviour, IServiceProvider
     [SerializeField] private Transform roleLayerTrans;
     [SerializeField] private Transform mapLayerTrans;
     [SerializeField] private Tile pathTile;
+    [SerializeField] private Canvas canvasLayer;
 
     public void Init()
     {
-        App.Make<NodeManager>().Inject(worldUITrans, roleLayerTrans, mapLayerTrans, pathTile);
+        App.Make<NodeManager>().Inject(worldUITrans, roleLayerTrans, mapLayerTrans, pathTile, canvasLayer);
     }
 
     public void Register()
