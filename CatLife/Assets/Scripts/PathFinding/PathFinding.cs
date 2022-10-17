@@ -401,7 +401,9 @@ public class PathFinding
         {
             path.Add(endNode.pos);
             pathNodeList.Add(endNode);
-            endNode = endNode.parent;
+            var parent = endNode.parent;
+            endNode.parent = null;
+            endNode = parent;
         }
 
         path.Reverse();
