@@ -21,8 +21,6 @@ public class NodeCell
 
     public Vector2Int index;
 
-    public bool isForced;
-
     public NodeCell(bool isObstacle, Vector3 pos, int x, int y, Vector3Int mappingTileIndex)
     {
         this.isObstacle = isObstacle;

@@ -76,6 +76,18 @@ public class Cat : BaseRole
     private void MouseClickCallback(Vector3 endPos)
     {
         movePosList = App.Make<MapManager>().FindPath(transform.position, endPos);
+        if (movePosList == null)
+        {
+            Debug.Log("未找到路径");
+            return;
+        }
+
+        if (movePosList.Count <= 0)
+        {
+            Debug.Log("原地路径");
+            return;
+        }
+
         moveIndex = 0;
         RefreshDirAndAni();
     }
