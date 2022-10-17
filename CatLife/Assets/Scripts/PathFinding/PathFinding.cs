@@ -156,7 +156,7 @@ public class PathFinding
             if (curNode == endCell)
             {
                 // 生成路径
-                return GeneratePath(startCell, endCell);
+                return Trace(curNode);
             }
 
             IdentitySuccessors(curNode, startCell, endCell, openList, closeList);
@@ -173,8 +173,8 @@ public class PathFinding
             // x->n 的方向
             Vector2Int dir = new Vector2Int(neighbour.x - curNode.x / Mathf.Max(Mathf.Abs(neighbour.x - curNode.x), 1),
                 neighbour.y - curNode.y / Mathf.Max(Mathf.Abs(neighbour.y - curNode.y), 1));
-            var jumpNode = Jump(curNode, dir, startNode, endNode);
-            if (jumpNode == null || jumpNode.isObstacle || closeList.Contains(jumpNode))
+            var jumpNode = Jump(curNode, dir, endNode);
+            if (jumpNode == null || closeList.Contains(jumpNode))
             {
                 continue;
             }
@@ -195,7 +195,7 @@ public class PathFinding
         }
     }
 
-    private NodeCell Jump(NodeCell current, Vector2Int dir, NodeCell startNode, NodeCell endNode)
+    private NodeCell Jump(NodeCell current, Vector2Int dir, NodeCell endNode)
     {
         if (!IsCanReachable(current.x + dir.x, current.y + dir.y))
         {
@@ -216,18 +216,18 @@ public class PathFinding
 
         if (dir.x != 0 && dir.y != 0)
         {
-            if (Jump(stepNode, new Vector2Int(dir.x, 0), startNode, endNode) != null)
+            if (Jump(stepNode, new Vector2Int(dir.x, 0), endNode) != null)
             {
                 return stepNode;
             }
 
-            if (Jump(stepNode, new Vector2Int(0, dir.y), startNode, endNode) != null)
+            if (Jump(stepNode, new Vector2Int(0, dir.y), endNode) != null)
             {
                 return stepNode;
             }
         }
 
-        return Jump(stepNode, dir, startNode, endNode);
+        return Jump(stepNode, dir, endNode);
     }
 
     private bool isExistForceNeighbours(NodeCell curNode)
@@ -368,7 +368,23 @@ public class PathFinding
             return false;
         }
 
-        return nodeCellArray[x, y].isObstacle;
+        return !nodeCellArray[x, y].isObstacle;
+    }
+
+    private List<Vector3> Trace(NodeCell nodeCell)
+    {
+        var path = new List<Vector3>() { nodeCell.pos };
+        pathNodeList = new List<NodeCell>() { nodeCell };
+        while (nodeCell.parent != null)
+        {
+            nodeCell = nodeCell.parent;
+            pathNodeList.Add(nodeCell);
+            path.Add(nodeCell.pos);
+        }
+
+        pathNodeList.Reverse();
+        path.Reverse();
+        return path;
     }
 
     #endregion
