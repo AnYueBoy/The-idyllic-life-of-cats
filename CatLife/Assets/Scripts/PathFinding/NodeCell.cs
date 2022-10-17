@@ -19,8 +19,6 @@ public class NodeCell
 
     public Vector3Int mappingTileIndex;
 
-    public Vector2Int index;
-
     public NodeCell(bool isObstacle, Vector3 pos, int x, int y, Vector3Int mappingTileIndex)
     {
         this.isObstacle = isObstacle;
@@ -28,7 +26,5 @@ public class NodeCell
         this.x = x;
         this.y = y;
         this.mappingTileIndex = mappingTileIndex;
-
-        index = new Vector2Int(x, y);
     }
 }
