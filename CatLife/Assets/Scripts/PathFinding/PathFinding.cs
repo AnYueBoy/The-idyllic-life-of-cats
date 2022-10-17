@@ -125,6 +125,12 @@ public class PathFinding
 
     #region JPS
 
+    public List<Vector3> FindPathByJps(Vector2Int startTileIndex, Vector2Int endTileIndex)
+    {
+        return FindPathByJps(nodeCellArray[startTileIndex.x, startTileIndex.y],
+            nodeCellArray[endTileIndex.x, endTileIndex.y]);
+    }
+
     public List<Vector3> FindPathByJps(NodeCell startCell, NodeCell endCell)
     {
         List<NodeCell> openList = new List<NodeCell>();
