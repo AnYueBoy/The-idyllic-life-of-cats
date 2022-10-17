@@ -170,33 +170,43 @@ public class PathFinding
     {
         foreach (var neighbour in GetJPSNeighbours(curNode))
         {
-            // x->n 的方向
-            Vector2Int dir = new Vector2Int(neighbour.x - curNode.x, neighbour.y - curNode.y);
-            var jumpNode = Jump(neighbour, dir, endNode);
-            if (jumpNode == null || closeList.Contains(jumpNode))
+            var jumpNode = Jump(neighbour, curNode, endNode);
+            if (jumpNode != null)
             {
-                continue;
-            }
-
-            int gCost = curNode.gCost + GetManhattan(curNode, jumpNode);
-
-            if (gCost < jumpNode.gCost || !openList.Contains(jumpNode))
-            {
-                jumpNode.gCost = gCost;
-                jumpNode.hCost = GetManhattan(jumpNode, endNode);
-                jumpNode.parent = curNode;
-
-                if (!openList.Contains(jumpNode))
+                if (closeList.Contains(jumpNode))
                 {
-                    openList.Add(jumpNode);
+                    continue;
+                }
+
+                int gCost = curNode.gCost + GetManhattan(curNode, jumpNode);
+
+                if (gCost < jumpNode.gCost || !openList.Contains(jumpNode))
+                {
+                    jumpNode.gCost = gCost;
+                    jumpNode.hCost = GetManhattan(jumpNode, endNode);
+                    jumpNode.parent = curNode;
+
+                    if (!openList.Contains(jumpNode))
+                    {
+                        openList.Add(jumpNode);
+                    }
                 }
             }
         }
     }
 
-    private NodeCell Jump(NodeCell curNode, Vector2Int dir, NodeCell endNode)
+    private NodeCell Jump(NodeCell curNode, NodeCell parentNode, NodeCell endNode)
     {
-        if (curNode == null || !IsCanReachable(curNode.x, curNode.y))
+        if (curNode == null)
+        {
+            return null;
+        }
+
+        int x = curNode.x;
+        int y = curNode.y;
+        int dx = curNode.x - parentNode.x;
+        int dy = curNode.y - parentNode.y;
+        if (!IsCanReachable(x, y))
         {
             return null;
         }
@@ -206,64 +216,38 @@ public class PathFinding
             return curNode;
         }
 
-        int dx = dir.x;
-        int dy = dir.y;
-
+        // Diagonal
         if (dx != 0 && dy != 0)
         {
-            if (IsCanReachable(curNode.x - dx, curNode.y + dy) && !IsCanReachable(curNode.x - dx, curNode.y))
-            {
+            if ((IsCanReachable(x - dx, y + dy) && !IsCanReachable(x - dx, y)) ||
+                (IsCanReachable(x + dx, y - dy) && !IsCanReachable(x, y - dy)))
                 return curNode;
-            }
 
-            if (IsCanReachable(curNode.x + dx, curNode.y - dy) && !IsCanReachable(curNode.x, curNode.y - dy))
-            {
+            if (Jump(nodeCellArray[x + dx, y], curNode, endNode) != null ||
+                Jump(nodeCellArray[x, y + dy], curNode, endNode) != null)
                 return curNode;
-            }
-
-            if (Jump(nodeCellArray[curNode.x + dx, curNode.y], new Vector2Int(dx, 0), endNode) != null)
-            {
-                return curNode;
-            }
-
-            if (Jump(nodeCellArray[curNode.x, curNode.y + dy], new Vector2Int(0, dy), endNode) != null)
-            {
-                return curNode;
-            }
         }
+        // Cardinal
         else
         {
             if (dx != 0)
             {
-                if (IsCanReachable(curNode.x + dx, curNode.y + 1) && !IsCanReachable(curNode.x, curNode.y + 1))
-                {
+                // Horizontal
+                if ((IsCanReachable(x + dx, y + 1) && !IsCanReachable(x, y + 1)) ||
+                    (IsCanReachable(x + dx, y - 1) && !IsCanReachable(x, y - 1)))
                     return curNode;
-                }
-
-                if (IsCanReachable(curNode.x + dx, curNode.y - 1) && !IsCanReachable(curNode.x, curNode.y - 1))
-                {
-                    return curNode;
-                }
             }
             else
             {
-                if (IsCanReachable(curNode.x + 1, curNode.y + dy) && !IsCanReachable(curNode.x + 1, curNode.y))
-                {
+                // Vertical
+                if ((IsCanReachable(x + 1, y + dy) && !IsCanReachable(x + 1, y)) ||
+                    (IsCanReachable(x - 1, y + dy) && !IsCanReachable(x - 1, y)))
                     return curNode;
-                }
-
-                if (IsCanReachable(curNode.x - 1, curNode.y + dy) && !IsCanReachable(curNode.x - 1, curNode.y))
-                {
-                    return curNode;
-                }
             }
         }
 
-        if (IsCanReachable(curNode.x + dx, curNode.y) || IsCanReachable(curNode.x, curNode.y + dy))
-        {
-            return Jump(nodeCellArray[curNode.x + dx, curNode.y + dy], dir, endNode);
-        }
-
+        if (IsCanReachable(x + dx, y) || IsCanReachable(x, y + dy))
+            return Jump(nodeCellArray[x + dx, y + dy], curNode, endNode);
         return null;
     }
 
