@@ -92,7 +92,7 @@ public class MapManager : IManager
 
         var startNodeArrayIndex = ConvertTileIndexToCellIndex(startCellIndex.x, startCellIndex.y);
         var endNodeArrayIndex = ConvertTileIndexToCellIndex(endCellIndex.x, endCellIndex.y);
-        List<Vector3> pathPosList = pathFinding.FindPath(startNodeArrayIndex, endNodeArrayIndex);
+        List<Vector3> pathPosList = pathFinding.FindPathByJps(startNodeArrayIndex, endNodeArrayIndex);
         List<NodeCell> pathNodeList = pathFinding.GeneratePathCallback();
         DrawPath(pathNodeList);
         return pathPosList;

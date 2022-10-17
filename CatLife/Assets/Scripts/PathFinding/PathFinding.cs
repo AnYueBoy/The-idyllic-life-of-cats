@@ -232,31 +232,19 @@ public class PathFinding
 
     private bool isExistForceNeighbours(NodeCell curNode)
     {
-        for (int i = -1; i <= 1; i++)
+        for (int i = 0; i < directionList.Count; i++)
         {
-            for (int j = -1; j <= 1; j++)
+            int x = curNode.x + directionList[i].x;
+            int y = curNode.y + directionList[i].y;
+
+            if (!IsCanReachable(x, y))
             {
-                if (i == 0 && j == 0)
-                {
-                    continue;
-                }
+                continue;
+            }
 
-                int x = curNode.x + i;
-                if (x < 0 || x >= horizontalValue)
-                {
-                    continue;
-                }
-
-                int y = curNode.y + j;
-                if (y < 0 || y >= verticalValue)
-                {
-                    continue;
-                }
-
-                if (nodeCellArray[x, y].isForced)
-                {
-                    return true;
-                }
+            if (nodeCellArray[x, y].isForced)
+            {
+                return true;
             }
         }
 
@@ -267,103 +255,100 @@ public class PathFinding
     {
         if (nodeCell.parent == null)
         {
-            // 返回八个方向的邻居迭代器
+            // 返回八个方向的邻居
             for (int i = 0; i < directionList.Count; i++)
             {
                 int x = nodeCell.x + directionList[i].x;
                 int y = nodeCell.y + directionList[i].y;
 
-                if (IsCanReachable(x, y))
-                {
-                    yield return nodeCellArray[x, y];
-                }
+                yield return nodeCellArray[x, y];
             }
         }
         else
         {
             var nodeParent = nodeCell.parent;
 
-            var dNormX = (nodeCell.x - nodeParent.x) / Mathf.Max(Mathf.Abs(nodeCell.x - nodeParent.x), 1);
-            var dNormY = (nodeCell.y - nodeParent.y) / Mathf.Max(Mathf.Abs(nodeCell.y - nodeParent.y), 1);
+            var dx = (nodeCell.x - nodeParent.x) / Mathf.Max(Mathf.Abs(nodeCell.x - nodeParent.x), 1);
+            var dy = (nodeCell.y - nodeParent.y) / Mathf.Max(Mathf.Abs(nodeCell.y - nodeParent.y), 1);
 
             // 斜向移动(剪枝)
-            if (dNormX != 0 && dNormY != 0)
+            if (dx != 0 && dy != 0)
             {
-                if (IsCanReachable(nodeCell.x, nodeCell.y + dNormY))
+                if (IsCanReachable(nodeCell.x, nodeCell.y + dy))
                 {
-                    yield return nodeCellArray[nodeCell.x, nodeCell.y + dNormY];
+                    yield return nodeCellArray[nodeCell.x, nodeCell.y + dy];
                 }
 
-                if (IsCanReachable(nodeCell.x + dNormX, nodeCell.y))
+                if (IsCanReachable(nodeCell.x + dx, nodeCell.y))
                 {
-                    yield return nodeCellArray[nodeCell.x + dNormX, nodeCell.y];
+                    yield return nodeCellArray[nodeCell.x + dx, nodeCell.y];
                 }
 
-                if (IsCanReachable(nodeCell.x, nodeCell.y + dNormY) ||
-                    IsCanReachable(nodeCell.x + dNormX, nodeCell.y) &&
-                    IsCanReachable(nodeCell.x + dNormX, nodeCell.y + dNormY))
+                if (IsCanReachable(nodeCell.x, nodeCell.y + dy) ||
+                    IsCanReachable(nodeCell.x + dx, nodeCell.y) &&
+                    IsCanReachable(nodeCell.x + dx, nodeCell.y + dy))
                 {
-                    yield return nodeCellArray[nodeCell.x + dNormX, nodeCell.y + dNormY];
+                    yield return nodeCellArray[nodeCell.x + dx, nodeCell.y + dy];
                 }
 
-                if (!IsCanReachable(nodeCell.x - dNormX, nodeCell.y) &&
-                    IsCanReachable(nodeCell.x, nodeCell.y + dNormY) &&
-                    IsCanReachable(nodeCell.x - dNormX, nodeCell.y + dNormY))
+                if (!IsCanReachable(nodeCell.x - dx, nodeCell.y) &&
+                    IsCanReachable(nodeCell.x, nodeCell.y + dy) &&
+                    IsCanReachable(nodeCell.x - dx, nodeCell.y + dy))
                 {
-                    nodeCellArray[nodeCell.x - dNormX, nodeCell.y + dNormY].isForced = true;
-                    yield return nodeCellArray[nodeCell.x - dNormX, nodeCell.y + dNormY];
+                    nodeCellArray[nodeCell.x - dx, nodeCell.y + dy].isForced = true;
+                    yield return nodeCellArray[nodeCell.x - dx, nodeCell.y + dy];
                 }
 
-                if (!IsCanReachable(nodeCell.x, nodeCell.y - dNormY) &&
-                    IsCanReachable(nodeCell.x + dNormX, nodeCell.y) &&
-                    IsCanReachable(nodeCell.x + dNormX, nodeCell.y - dNormY))
+                if (!IsCanReachable(nodeCell.x, nodeCell.y - dy) &&
+                    IsCanReachable(nodeCell.x + dx, nodeCell.y) &&
+                    IsCanReachable(nodeCell.x + dx, nodeCell.y - dy))
                 {
-                    nodeCellArray[nodeCell.x + dNormX, nodeCell.y - dNormY].isForced = true;
-                    yield return nodeCellArray[nodeCell.x + dNormX, nodeCell.y - dNormY];
+                    nodeCellArray[nodeCell.x + dx, nodeCell.y - dy].isForced = true;
+                    yield return nodeCellArray[nodeCell.x + dx, nodeCell.y - dy];
                 }
             }
             // 直线移动
             else
             {
                 // 垂直移动
-                if (dNormX == 0)
+                if (dx == 0)
                 {
-                    if (IsCanReachable(nodeCell.x, nodeCell.y + dNormY))
+                    if (IsCanReachable(nodeCell.x, nodeCell.y + dy))
                     {
-                        yield return nodeCellArray[nodeCell.x, nodeCell.y + dNormY];
+                        yield return nodeCellArray[nodeCell.x, nodeCell.y + dy];
                         if (!IsCanReachable(nodeCell.x + 1, nodeCell.y) &&
-                            IsCanReachable(nodeCell.x + 1, nodeCell.y + dNormY))
+                            IsCanReachable(nodeCell.x + 1, nodeCell.y + dy))
                         {
-                            nodeCellArray[nodeCell.x + 1, nodeCell.y + dNormY].isForced = true;
-                            yield return nodeCellArray[nodeCell.x + 1, nodeCell.y + dNormY];
+                            nodeCellArray[nodeCell.x + 1, nodeCell.y + dy].isForced = true;
+                            yield return nodeCellArray[nodeCell.x + 1, nodeCell.y + dy];
                         }
 
                         if (!IsCanReachable(nodeCell.x - 1, nodeCell.y) &&
-                            IsCanReachable(nodeCell.x - 1, nodeCell.y + dNormY))
+                            IsCanReachable(nodeCell.x - 1, nodeCell.y + dy))
                         {
-                            nodeCellArray[nodeCell.x - 1, nodeCell.y + dNormY].isForced = true;
-                            yield return nodeCellArray[nodeCell.x - 1, nodeCell.y + dNormY];
+                            nodeCellArray[nodeCell.x - 1, nodeCell.y + dy].isForced = true;
+                            yield return nodeCellArray[nodeCell.x - 1, nodeCell.y + dy];
                         }
                     }
                 }
                 else
                 {
-                    if (IsCanReachable(nodeCell.x + dNormX, nodeCell.y))
+                    if (IsCanReachable(nodeCell.x + dx, nodeCell.y))
                     {
-                        yield return nodeCellArray[nodeCell.x + dNormX, nodeCell.y];
+                        yield return nodeCellArray[nodeCell.x + dx, nodeCell.y];
 
                         if (!IsCanReachable(nodeCell.x, nodeCell.y + 1) &&
-                            IsCanReachable(nodeCell.x + dNormX, nodeCell.y + 1))
+                            IsCanReachable(nodeCell.x + dx, nodeCell.y + 1))
                         {
-                            nodeCellArray[nodeCell.x + dNormX, nodeCell.y + 1].isForced = true;
-                            yield return nodeCellArray[nodeCell.x + dNormX, nodeCell.y + 1];
+                            nodeCellArray[nodeCell.x + dx, nodeCell.y + 1].isForced = true;
+                            yield return nodeCellArray[nodeCell.x + dx, nodeCell.y + 1];
                         }
 
                         if (!IsCanReachable(nodeCell.x, nodeCell.y - 1) &&
-                            IsCanReachable(nodeCell.x + dNormX, nodeCell.y - 1))
+                            IsCanReachable(nodeCell.x + dx, nodeCell.y - 1))
                         {
-                            nodeCellArray[nodeCell.x + dNormX, nodeCell.y - 1].isForced = true;
-                            yield return nodeCellArray[nodeCell.x + dNormX, nodeCell.y - 1];
+                            nodeCellArray[nodeCell.x + dx, nodeCell.y - 1].isForced = true;
+                            yield return nodeCellArray[nodeCell.x + dx, nodeCell.y - 1];
                         }
                     }
                 }
