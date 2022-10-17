@@ -123,6 +123,140 @@ public class PathFinding
         return neighbours;
     }
 
+    #region JPS
+
+    public List<Vector3> FindPathByJps(NodeCell startCell, NodeCell endCell)
+    {
+        List<NodeCell> openList = new List<NodeCell>();
+        List<NodeCell> closeList = new List<NodeCell>();
+
+        openList.Add(startCell);
+
+        while (openList.Count > 0)
+        {
+            NodeCell curNode = openList[0];
+            for (int i = 0; i < openList.Count; i++)
+            {
+                if (openList[i].FCost < curNode.FCost ||
+                    (openList[i].FCost == curNode.FCost && openList[i].hCost < curNode.hCost))
+                {
+                    curNode = openList[i];
+                }
+            }
+
+            openList.Remove(curNode);
+            closeList.Add(curNode);
+
+            if (curNode == endCell)
+            {
+                // 生成路径
+                return GeneratePath(startCell, endCell);
+            }
+
+            IdentitySuccessors(curNode, startCell, endCell, openList, closeList);
+        }
+
+        return null;
+    }
+
+    private void IdentitySuccessors(NodeCell curNode, NodeCell startNode, NodeCell endNode, List<NodeCell> openList,
+        List<NodeCell> closeList)
+    {
+        foreach (var neighbour in GetJPSNeighbours(curNode))
+        {
+            // x->n 的方向
+            Vector2Int dir = new Vector2Int(neighbour.x - curNode.x / Mathf.Max(Mathf.Abs(neighbour.x - curNode.x), 1),
+                neighbour.y - curNode.y / Mathf.Max(Mathf.Abs(neighbour.y - curNode.y), 1));
+            var jumpNode = Jump(curNode, dir, startNode, endNode);
+            if (jumpNode == null || jumpNode.isObstacle || closeList.Contains(jumpNode))
+            {
+                continue;
+            }
+
+            int gCost = curNode.gCost + GetManhattan(curNode, jumpNode);
+
+            if (gCost < jumpNode.gCost || !openList.Contains(jumpNode))
+            {
+                jumpNode.gCost = gCost;
+                jumpNode.hCost = GetManhattan(jumpNode, endNode);
+                jumpNode.parent = curNode;
+
+                if (!openList.Contains(jumpNode))
+                {
+                    openList.Add(jumpNode);
+                }
+            }
+        }
+    }
+
+    private NodeCell Jump(NodeCell current, Vector2Int dir, NodeCell startNode, NodeCell endNode)
+    {
+        if (!IsCanReachable(current.x + dir.x, current.y + dir.y))
+        {
+            return null;
+        }
+
+        var stepNode = nodeCellArray[current.x + dir.x, current.y + dir.y];
+
+        if (stepNode == endNode)
+        {
+            return stepNode;
+        }
+
+        if (isExistForceNeighbours(stepNode))
+        {
+            return stepNode;
+        }
+
+        if (dir.x != 0 && dir.y != 0)
+        {
+            if (Jump(stepNode, new Vector2Int(dir.x, 0), startNode, endNode) != null)
+            {
+                return stepNode;
+            }
+
+            if (Jump(stepNode, new Vector2Int(0, dir.y), startNode, endNode) != null)
+            {
+                return stepNode;
+            }
+        }
+
+        return Jump(stepNode, dir, startNode, endNode);
+    }
+
+    private bool isExistForceNeighbours(NodeCell curNode)
+    {
+        for (int i = -1; i <= 1; i++)
+        {
+            for (int j = -1; j <= 1; j++)
+            {
+                if (i == 0 && j == 0)
+                {
+                    continue;
+                }
+
+                int x = curNode.x + i;
+                if (x < 0 || x >= horizontalValue)
+                {
+                    continue;
+                }
+
+                int y = curNode.y + j;
+                if (y < 0 || y >= verticalValue)
+                {
+                    continue;
+                }
+
+                if (nodeCellArray[x, y].isForced)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     private IEnumerable<NodeCell> GetJPSNeighbours(NodeCell nodeCell)
     {
         if (nodeCell.parent == null)
@@ -170,6 +304,7 @@ public class PathFinding
                     IsCanReachable(nodeCell.x, nodeCell.y + dNormY) &&
                     IsCanReachable(nodeCell.x - dNormX, nodeCell.y + dNormY))
                 {
+                    nodeCellArray[nodeCell.x - dNormX, nodeCell.y + dNormY].isForced = true;
                     yield return nodeCellArray[nodeCell.x - dNormX, nodeCell.y + dNormY];
                 }
 
@@ -177,6 +312,7 @@ public class PathFinding
                     IsCanReachable(nodeCell.x + dNormX, nodeCell.y) &&
                     IsCanReachable(nodeCell.x + dNormX, nodeCell.y - dNormY))
                 {
+                    nodeCellArray[nodeCell.x + dNormX, nodeCell.y - dNormY].isForced = true;
                     yield return nodeCellArray[nodeCell.x + dNormX, nodeCell.y - dNormY];
                 }
             }
@@ -192,12 +328,14 @@ public class PathFinding
                         if (!IsCanReachable(nodeCell.x + 1, nodeCell.y) &&
                             IsCanReachable(nodeCell.x + 1, nodeCell.y + dNormY))
                         {
+                            nodeCellArray[nodeCell.x + 1, nodeCell.y + dNormY].isForced = true;
                             yield return nodeCellArray[nodeCell.x + 1, nodeCell.y + dNormY];
                         }
 
                         if (!IsCanReachable(nodeCell.x - 1, nodeCell.y) &&
                             IsCanReachable(nodeCell.x - 1, nodeCell.y + dNormY))
                         {
+                            nodeCellArray[nodeCell.x - 1, nodeCell.y + dNormY].isForced = true;
                             yield return nodeCellArray[nodeCell.x - 1, nodeCell.y + dNormY];
                         }
                     }
@@ -211,12 +349,14 @@ public class PathFinding
                         if (!IsCanReachable(nodeCell.x, nodeCell.y + 1) &&
                             IsCanReachable(nodeCell.x + dNormX, nodeCell.y + 1))
                         {
+                            nodeCellArray[nodeCell.x + dNormX, nodeCell.y + 1].isForced = true;
                             yield return nodeCellArray[nodeCell.x + dNormX, nodeCell.y + 1];
                         }
 
                         if (!IsCanReachable(nodeCell.x, nodeCell.y - 1) &&
                             IsCanReachable(nodeCell.x + dNormX, nodeCell.y - 1))
                         {
+                            nodeCellArray[nodeCell.x + dNormX, nodeCell.y - 1].isForced = true;
                             yield return nodeCellArray[nodeCell.x + dNormX, nodeCell.y - 1];
                         }
                     }
@@ -239,6 +379,9 @@ public class PathFinding
 
         return nodeCellArray[x, y].isObstacle;
     }
+
+    #endregion
+
 
     private int GetManhattan(NodeCell curNode, NodeCell endCell)
     {
