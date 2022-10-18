@@ -1,6 +1,7 @@
 ﻿using BitFramework.Core;
+using UnityEngine;
 
-public class ProviderMapManager : IServiceProvider
+public class ProviderMapManager : MonoBehaviour, IServiceProvider
 {
     public void Init()
     {
@@ -8,6 +9,6 @@ public class ProviderMapManager : IServiceProvider
 
     public void Register()
     {
-        App.Singleton<MapManager>();
+        App.Instance<MapManager>(GetComponent<MapManager>());
     }
 }

@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using BitFramework.Core;
 using UnityEngine;
 
-public class MapManager : IManager
+public class MapManager : MonoBehaviour, IManager
 {
+    [SerializeField] private bool isOpenDebug;
+
     public void Init()
     {
         pathFinding = new PathFinding();
@@ -93,23 +95,8 @@ public class MapManager : IManager
         var startNodeArrayIndex = ConvertTileIndexToCellIndex(startCellIndex.x, startCellIndex.y);
         var endNodeArrayIndex = ConvertTileIndexToCellIndex(endCellIndex.x, endCellIndex.y);
         List<Vector3> pathPosList = pathFinding.FindPathByJps(startNodeArrayIndex, endNodeArrayIndex);
-        List<NodeCell> pathNodeList = pathFinding.GeneratePathCallback();
-        DrawPath(pathNodeList);
         return pathPosList;
     }
 
-    private void DrawPath(List<NodeCell> pathNodeList)
-    {
-        if (pathNodeList == null || pathNodeList.Count <= 0)
-        {
-            return;
-        }
-        
-        curMap.FarmTileMap.ClearAllTiles();
-
-        foreach (NodeCell nodeCell in pathNodeList)
-        {
-            curMap.FarmTileMap.SetTile(nodeCell.mappingTileIndex, App.Make<NodeManager>().pathTile);
-        }
-    }
+    public bool IsOpenDebug => isOpenDebug;
 }
