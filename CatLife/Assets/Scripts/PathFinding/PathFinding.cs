@@ -205,9 +205,10 @@ public class PathFinding
             return curNode;
         }
 
-        // Diagonal
+        // 斜向
         if (dx != 0 && dy != 0)
         {
+            // 寻找强迫邻居，进而判断该节点是否为跳点
             if ((IsCanReachable(x - dx, y + dy) && !IsCanReachable(x - dx, y)) ||
                 (IsCanReachable(x + dx, y - dy) && !IsCanReachable(x, y - dy)))
                 return curNode;
@@ -216,19 +217,19 @@ public class PathFinding
                 Jump(nodeCellArray[x, y + dy], curNode, endNode) != null)
                 return curNode;
         }
-        // Cardinal
+        // 直线
         else
         {
             if (dx != 0)
             {
-                // Horizontal
+                // 水平 
                 if ((IsCanReachable(x + dx, y + 1) && !IsCanReachable(x, y + 1)) ||
                     (IsCanReachable(x + dx, y - 1) && !IsCanReachable(x, y - 1)))
                     return curNode;
             }
             else
             {
-                // Vertical
+                // 垂直
                 if ((IsCanReachable(x + 1, y + dy) && !IsCanReachable(x + 1, y)) ||
                     (IsCanReachable(x - 1, y + dy) && !IsCanReachable(x - 1, y)))
                     return curNode;
