@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public class BinaryHeap<T> where T : IComparable<T>
 {
-    private readonly List<T> itemList;
+    public readonly List<T> itemList;
     private int count;
 
     public BinaryHeap()
@@ -23,13 +23,13 @@ public class BinaryHeap<T> where T : IComparable<T>
 
     private void Ascent(int currentIndex)
     {
-        int parentIndex = currentIndex >> 1;
+        int parentIndex = (currentIndex - 1) >> 1;
 
         while (currentIndex > 0 && itemList[parentIndex].CompareTo(itemList[currentIndex]) > 0)
         {
             SwapNode(parentIndex, currentIndex);
             currentIndex = parentIndex;
-            parentIndex = currentIndex >> 1;
+            parentIndex = (currentIndex - 1) >> 1;
         }
     }
 
@@ -39,6 +39,7 @@ public class BinaryHeap<T> where T : IComparable<T>
         T targetNode = itemList[0];
 
         itemList[0] = itemList[count];
+        itemList.RemoveAt(count);
         int current = 0;
         Sink(current);
         return targetNode;
@@ -46,7 +47,7 @@ public class BinaryHeap<T> where T : IComparable<T>
 
     private void Sink(int currentIndex)
     {
-        while ((currentIndex << 1) + 2 <= count)
+        while ((currentIndex << 1) + 2 < count)
         {
             int leftChild = (currentIndex << 1) + 1;
             int rightChild = leftChild + 1;
