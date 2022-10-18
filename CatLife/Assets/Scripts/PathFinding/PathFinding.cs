@@ -392,11 +392,6 @@ public class PathFinding
     {
         List<Vector3> path = new List<Vector3>();
         pathNodeList = new List<NodeCell>();
-        if (endNode == null)
-        {
-            return path;
-        }
-
         while (endNode != startNode)
         {
             path.Add(endNode.pos);
@@ -405,6 +400,9 @@ public class PathFinding
             endNode.parent = null;
             endNode = parent;
         }
+
+        path.Add(startNode.pos);
+        pathNodeList.Add(startNode);
 
         path.Reverse();
         pathNodeList.Reverse();
