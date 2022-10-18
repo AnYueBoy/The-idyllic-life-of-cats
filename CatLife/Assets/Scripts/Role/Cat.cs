@@ -88,6 +88,7 @@ public class Cat : BaseRole
             return;
         }
 
+        //FIXME: 当人物寻路刚进入目标网格后，再次点击目标网格，此时识别为原路径，造成人物实际移动逻辑停止
         moveIndex = 0;
         RefreshDirAndAni();
     }
