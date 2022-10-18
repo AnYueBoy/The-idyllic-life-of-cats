@@ -69,6 +69,30 @@ public class BinaryHeap<T> where T : IComparable<T>
         }
     }
 
+    public void UpdateHead(T node)
+    {
+        if (node == null || !itemList.Contains(node))
+        {
+            return;
+        }
+
+        int index = itemList.IndexOf(node);
+        UpdateHead(index);
+    }
+
+    public bool Contains(T node)
+    {
+        return itemList.Contains(node);
+    }
+
+    public void Clear()
+    {
+        count = 0;
+        itemList.Clear();
+    }
+
+    public int Count => count;
+
     private void SwapNode(int index1, int index2)
     {
         var temp = itemList[index1];

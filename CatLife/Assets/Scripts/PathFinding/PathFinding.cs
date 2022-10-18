@@ -6,6 +6,7 @@ public class PathFinding
     private NodeCell[,] nodeCellArray;
     private int horizontalValue;
     private int verticalValue;
+    private BinaryHeap<NodeCell> binaryHeap;
 
     private readonly List<Vector2Int> directionList = new List<Vector2Int>()
     {
@@ -29,6 +30,7 @@ public class PathFinding
         this.horizontalValue = horizontalValue;
         this.verticalValue = verticalValue;
         this.nodeCellArray = nodeCellArray;
+        binaryHeap = new BinaryHeap<NodeCell>();
     }
 
     #region A*寻路
@@ -122,24 +124,14 @@ public class PathFinding
 
     public List<Vector3> FindPathByJps(NodeCell startCell, NodeCell endCell)
     {
-        List<NodeCell> openList = new List<NodeCell>();
         List<NodeCell> closeList = new List<NodeCell>();
+        binaryHeap.Clear();
 
-        openList.Add(startCell);
+        binaryHeap.Push(startCell);
 
-        while (openList.Count > 0)
+        while (binaryHeap.Count > 0)
         {
-            NodeCell curNode = openList[0];
-            for (int i = 0; i < openList.Count; i++)
-            {
-                if (openList[i].FCost < curNode.FCost ||
-                    (openList[i].FCost == curNode.FCost && openList[i].hCost < curNode.hCost))
-                {
-                    curNode = openList[i];
-                }
-            }
-
-            openList.Remove(curNode);
+            var curNode = binaryHeap.Pop();
             closeList.Add(curNode);
 
             if (curNode == endCell)
@@ -148,13 +140,13 @@ public class PathFinding
                 return GeneratePath(startCell, endCell);
             }
 
-            IdentitySuccessors(curNode, endCell, openList, closeList);
+            IdentitySuccessors(curNode, endCell, binaryHeap, closeList);
         }
 
         return null;
     }
 
-    private void IdentitySuccessors(NodeCell curNode, NodeCell endNode, List<NodeCell> openList,
+    private void IdentitySuccessors(NodeCell curNode, NodeCell endNode,BinaryHeap<NodeCell> openList,
         List<NodeCell> closeList)
     {
         foreach (var neighbour in GetJPSNeighbours(curNode))
@@ -177,7 +169,11 @@ public class PathFinding
 
                     if (!openList.Contains(jumpNode))
                     {
-                        openList.Add(jumpNode);
+                        openList.Push(jumpNode);
+                    }
+                    else
+                    {
+                        openList.UpdateHead(jumpNode);
                     }
                 }
             }

@@ -1,6 +1,7 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
-public class NodeCell
+public class NodeCell : IComparable<NodeCell>
 {
     public NodeCell parent;
 
@@ -26,5 +27,11 @@ public class NodeCell
         this.x = x;
         this.y = y;
         this.mappingTileIndex = mappingTileIndex;
+    }
+
+
+    public int CompareTo(NodeCell other)
+    {
+        return FCost - other.FCost;
     }
 }
