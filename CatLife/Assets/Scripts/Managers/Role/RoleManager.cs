@@ -5,6 +5,8 @@ public class RoleManager : IManager
 {
     private List<BaseRole> roleList;
 
+    private BaseRole mainRole;
+
     public void Init()
     {
         roleList = new List<BaseRole>();
@@ -30,6 +32,10 @@ public class RoleManager : IManager
 
     public void AddRole(BaseRole role)
     {
+        // TODO: temp logic
+        mainRole = role;
         roleList.Add(role);
     }
+
+    public BaseRole MainRole => mainRole;
 }

@@ -29,6 +29,7 @@ public class Cat : BaseRole
 
     public override void LocalUpdate(float dt)
     {
+        base.LocalUpdate(dt);
         MouseRoleMoveLogic(dt);
     }
 
@@ -70,7 +71,6 @@ public class Cat : BaseRole
 
     private Vector3 moveDir;
 
-    private List<Vector3> movePosList;
     private int moveIndex;
 
     private void MouseClickCallback(Vector3 endPos)
