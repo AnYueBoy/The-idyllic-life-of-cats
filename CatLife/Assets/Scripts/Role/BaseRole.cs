@@ -26,7 +26,7 @@ public abstract class BaseRole : MonoBehaviour
         {
             Debug.DrawLine(movePosList[i], movePosList[i + 1], Color.red, -1);
         }
-
+        
         Debug.DrawLine(transform.position, movePosList[moveIndex], Color.red, -1);
     }
 }

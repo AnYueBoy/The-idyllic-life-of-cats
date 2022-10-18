@@ -7,4 +7,6 @@
     public const string Map1Path = "Map/Map1";
 
     public const string Map2Path = "Map/Map2";
+
+    public const string MapLocationPath = "Map/Debug/Location";
 }

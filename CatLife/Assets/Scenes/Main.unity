@@ -184,7 +184,6 @@ MonoBehaviour:
   roleLayerTrans: {fileID: 70790526}
   mapLayerTrans: {fileID: 1015839674}
   canvasLayer: {fileID: 1039434032}
-  pathTile: {fileID: 11400000, guid: b993ee8b748e593488c7cfdbcc2cbc0b, type: 2}
 --- !u!1 &70790525
 GameObject:
   m_ObjectHideFlags: 0

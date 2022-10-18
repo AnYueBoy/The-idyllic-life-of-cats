@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using BitFramework.Component.AssetsModule;
+using BitFramework.Component.ObjectPoolModule;
 using BitFramework.Core;
 using UnityEngine;
 
@@ -95,8 +97,29 @@ public class MapManager : MonoBehaviour, IManager
         var startNodeArrayIndex = ConvertTileIndexToCellIndex(startCellIndex.x, startCellIndex.y);
         var endNodeArrayIndex = ConvertTileIndexToCellIndex(endCellIndex.x, endCellIndex.y);
         List<Vector3> pathPosList = pathFinding.FindPathByJps(startNodeArrayIndex, endNodeArrayIndex);
+        DrawPathPoint(pathPosList);
         return pathPosList;
     }
 
     public bool IsOpenDebug => isOpenDebug;
+
+    private List<GameObject> pathPointList = new List<GameObject>();
+
+    private void DrawPathPoint(List<Vector3> pathPosList)
+    {
+        foreach (var point in pathPointList)
+        {
+            App.Make<IObjectPool>().ReturnInstance(point);
+        }
+
+        GameObject locationPrefab =
+            App.Make<IAssetsManager>().GetAssetByUrlSync<GameObject>(AssetsPath.MapLocationPath);
+        foreach (var pos in pathPosList)
+        {
+            GameObject locationNode = App.Make<IObjectPool>().RequestInstance(locationPrefab);
+            locationNode.transform.SetParent(App.Make<NodeManager>().MapLayerTrans);
+            locationNode.transform.position = pos;
+            pathPointList.Add(locationNode);
+        }
+    }
 }
