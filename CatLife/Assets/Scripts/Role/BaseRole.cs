@@ -13,7 +13,7 @@ public abstract class BaseRole : MonoBehaviour
 
     protected List<Vector3> movePosList;
 
-    protected virtual void DrawPath()
+    private void DrawPath()
     {
         if (!App.Make<MapManager>().IsOpenDebug || movePosList == null || movePosList.Count < 1)
         {
