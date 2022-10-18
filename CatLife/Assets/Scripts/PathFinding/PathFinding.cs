@@ -381,7 +381,7 @@ public class PathFinding
         {
             path.Add(endNode.pos);
             var parent = endNode.parent;
-            endNode.parent = null;
+            endNode.Reset();
             endNode = parent;
         }
 

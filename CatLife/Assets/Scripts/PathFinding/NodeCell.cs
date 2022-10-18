@@ -29,6 +29,11 @@ public class NodeCell : IComparable<NodeCell>
         this.mappingTileIndex = mappingTileIndex;
     }
 
+    public void Reset()
+    {
+        gCost = hCost = 0;
+        parent = null;
+    }
 
     public int CompareTo(NodeCell other)
     {
