@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using BitFramework.Core;
 using UnityEngine;
 
 public class PathFinding
@@ -31,6 +30,8 @@ public class PathFinding
         this.verticalValue = verticalValue;
         this.nodeCellArray = nodeCellArray;
     }
+
+    #region A*寻路
 
     public List<Vector3> FindPath(Vector2Int startTileIndex, Vector2Int endTileIndex)
     {
@@ -92,36 +93,24 @@ public class PathFinding
         return null;
     }
 
-    private List<NodeCell> GetNeighbours(NodeCell nodeCell)
+    private List<NodeCell> GetNeighbours(NodeCell curNode)
     {
         List<NodeCell> neighbours = new List<NodeCell>();
-        for (int i = -1; i <= 1; i++)
+        for (int i = 0; i < directionList.Count; i++)
         {
-            for (int j = -1; j <= 1; j++)
+            int x = curNode.x + directionList[i].x;
+            int y = curNode.y + directionList[i].y;
+
+            if (IsCanReachable(x, y))
             {
-                if (i == 0 && j == 0)
-                {
-                    continue;
-                }
-
-                int x = nodeCell.x + i;
-                if (x < 0 || x >= horizontalValue)
-                {
-                    continue;
-                }
-
-                int y = nodeCell.y + j;
-                if (y < 0 || y >= verticalValue)
-                {
-                    continue;
-                }
-
                 neighbours.Add(nodeCellArray[x, y]);
             }
         }
 
         return neighbours;
     }
+
+    #endregion
 
     #region JPS
 
