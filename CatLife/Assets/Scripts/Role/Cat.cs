@@ -73,21 +73,21 @@ public class Cat : BaseRole
 
     private void MouseClickCallback(Vector3 endPos)
     {
-        movePosList = App.Make<MapManager>().FindPath(transform.position, endPos);
-        if (movePosList == null)
+        var findPathList = App.Make<MapManager>().FindPath(transform.position, endPos);
+        if (findPathList == null)
         {
             Debug.Log("未找到路径");
             return;
         }
 
-        if (movePosList.Count <= 0)
+        if (findPathList.Count <= 0)
         {
             Debug.Log("原地路径");
             return;
         }
 
-        //FIXME: 当人物寻路刚进入目标网格后，再次点击目标网格，此时识别为原路径，造成人物实际移动逻辑停止
         moveIndex = 0;
+        movePosList = findPathList;
         RefreshDirAndAni();
     }
 
