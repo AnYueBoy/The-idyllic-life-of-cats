@@ -312,20 +312,14 @@ public class PathFinding
                     if (IsCanReachable(curNode.x, curNode.y + dy))
                     {
                         neighbours.Add(nodeCellArray[curNode.x, curNode.y + dy]);
-                        if (!IsCanReachable(curNode.x + 1, curNode.y))
+                        if (!IsCanReachable(curNode.x + 1, curNode.y) && IsCanReachable(curNode.x + 1, curNode.y + dy))
                         {
-                            if (IsCanReachable(curNode.x + 1, curNode.y + dy))
-                            {
-                                neighbours.Add(nodeCellArray[curNode.x + 1, curNode.y + dy]);
-                            }
+                            neighbours.Add(nodeCellArray[curNode.x + 1, curNode.y + dy]);
                         }
 
-                        if (!IsCanReachable(curNode.x - 1, curNode.y))
+                        if (!IsCanReachable(curNode.x - 1, curNode.y) && IsCanReachable(curNode.x - 1, curNode.y + dy))
                         {
-                            if (IsCanReachable(curNode.x - 1, curNode.y + dy))
-                            {
-                                neighbours.Add(nodeCellArray[curNode.x - 1, curNode.y + dy]);
-                            }
+                            neighbours.Add(nodeCellArray[curNode.x - 1, curNode.y + dy]);
                         }
                     }
                 }
@@ -334,12 +328,12 @@ public class PathFinding
                     if (IsCanReachable(curNode.x + dx, curNode.y))
                     {
                         neighbours.Add(nodeCellArray[curNode.x + dx, curNode.y]);
-                        if (!IsCanReachable(curNode.x, curNode.y + 1))
+                        if (!IsCanReachable(curNode.x, curNode.y + 1) && IsCanReachable(curNode.x + dx, curNode.y + 1))
                         {
-                            neighbours.Add(nodeCellArray[curNode.x, curNode.y + 1]);
+                            neighbours.Add(nodeCellArray[curNode.x + dx, curNode.y + 1]);
                         }
 
-                        if (!IsCanReachable(curNode.x, curNode.y - 1))
+                        if (!IsCanReachable(curNode.x, curNode.y - 1) && IsCanReachable(curNode.x + dx, curNode.y - 1))
                         {
                             neighbours.Add(nodeCellArray[curNode.x + dx, curNode.y - 1]);
                         }
