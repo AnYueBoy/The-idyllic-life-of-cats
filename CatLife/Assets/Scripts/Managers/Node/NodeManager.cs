@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.Tilemaps;
 
 public class NodeManager : MonoBehaviour, IManager
 {
@@ -7,8 +6,6 @@ public class NodeManager : MonoBehaviour, IManager
     [SerializeField] private Transform roleLayerTrans;
     [SerializeField] private Transform mapLayerTrans;
     [SerializeField] private Canvas canvasLayer;
-
-    public Tile pathTile;
 
     public void Init()
     {

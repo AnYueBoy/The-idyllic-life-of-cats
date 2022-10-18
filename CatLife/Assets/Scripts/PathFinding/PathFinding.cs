@@ -146,7 +146,7 @@ public class PathFinding
         return null;
     }
 
-    private void IdentitySuccessors(NodeCell curNode, NodeCell endNode,BinaryHeap<NodeCell> openList,
+    private void IdentitySuccessors(NodeCell curNode, NodeCell endNode, BinaryHeap<NodeCell> openList,
         List<NodeCell> closeList)
     {
         foreach (var neighbour in GetJPSNeighbours(curNode))
@@ -377,27 +377,15 @@ public class PathFinding
     private List<Vector3> GeneratePath(NodeCell startNode, NodeCell endNode)
     {
         List<Vector3> path = new List<Vector3>();
-        pathNodeList = new List<NodeCell>();
         while (endNode != startNode)
         {
             path.Add(endNode.pos);
-            pathNodeList.Add(endNode);
             var parent = endNode.parent;
             endNode.parent = null;
             endNode = parent;
         }
 
-        pathNodeList.Add(startNode);
-
         path.Reverse();
-        pathNodeList.Reverse();
         return path;
-    }
-
-    private List<NodeCell> pathNodeList;
-
-    public List<NodeCell> GeneratePathCallback()
-    {
-        return pathNodeList;
     }
 }
