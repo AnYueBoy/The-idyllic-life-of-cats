@@ -8,6 +8,7 @@ using UnityEngine;
 public class MapManager : MonoBehaviour, IManager
 {
     [SerializeField] private bool isOpenDebug;
+    [SerializeField] private bool useJps;
 
     public void Init()
     {
@@ -96,7 +97,16 @@ public class MapManager : MonoBehaviour, IManager
 
         var startNodeArrayIndex = ConvertTileIndexToCellIndex(startCellIndex.x, startCellIndex.y);
         var endNodeArrayIndex = ConvertTileIndexToCellIndex(endCellIndex.x, endCellIndex.y);
-        List<Vector3> pathPosList = pathFinding.FindPathByJps(startNodeArrayIndex, endNodeArrayIndex);
+        List<Vector3> pathPosList;
+        if (useJps)
+        {
+            pathPosList = pathFinding.FindPathByJps(startNodeArrayIndex, endNodeArrayIndex);
+        }
+        else
+        {
+            pathPosList = pathFinding.FindPath(startNodeArrayIndex, endNodeArrayIndex);
+        }
+
         DrawPathPoint(pathPosList);
         return pathPosList;
     }
@@ -107,6 +117,11 @@ public class MapManager : MonoBehaviour, IManager
 
     private void DrawPathPoint(List<Vector3> pathPosList)
     {
+        if (!isOpenDebug)
+        {
+            return;
+        }
+
         foreach (var point in pathPointList)
         {
             App.Make<IObjectPool>().ReturnInstance(point);
