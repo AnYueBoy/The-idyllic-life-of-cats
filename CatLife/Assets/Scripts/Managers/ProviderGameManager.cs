@@ -1,7 +1,6 @@
 ﻿using BitFramework.Core;
-using UnityEngine;
 
-public class ProviderGameManager : MonoBehaviour, IServiceProvider
+public class ProviderGameManager : IServiceProvider
 {
     public void Init()
     {

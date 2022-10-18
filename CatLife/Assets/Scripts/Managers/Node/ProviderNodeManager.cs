@@ -9,6 +9,6 @@ public class ProviderNodeManager : MonoBehaviour, IServiceProvider
 
     public void Register()
     {
-        App.Singleton<NodeManager>();
+        App.Instance<NodeManager>(GetComponent<NodeManager>());
     }
 }

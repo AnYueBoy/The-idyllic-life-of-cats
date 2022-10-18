@@ -11,12 +11,12 @@ public static class Providers
             return new IServiceProvider[]
             {
                 // 项目中自定义的服务提供者
+                new ProviderGameManager(),
                 new ProviderAssetsModule(),
                 new ProviderObjectPoolModule(),
                 new ProviderRoleManager(),
                 new ProviderInputManager(),
                 new ProviderSpawnManager(),
-                new ProviderMapManager(),
             };
         }
     }

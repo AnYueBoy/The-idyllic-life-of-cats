@@ -1,9 +1,8 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using LitJson;
 using UnityEngine;
 
-public class DataManager : IManager
+public class DataManager : MonoBehaviour, IManager
 {
     private PlayerData playerData;
 
@@ -63,9 +62,8 @@ public class DataManager : IManager
         playerData = JsonMapper.ToObject<PlayerData>(dataJson);
     }
 
-    public void OnApplicationPause(bool pauseStatus)
+    private void OnApplicationPause(bool pauseStatus)
     {
-        Debug.Log("前后台");
         if (pauseStatus)
         {
             SerializeData();
