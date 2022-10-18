@@ -18,6 +18,11 @@ public class BinaryHeap<T> where T : IComparable<T>
         count++;
 
         int currentIndex = count - 1;
+        Ascent(currentIndex);
+    }
+
+    private void Ascent(int currentIndex)
+    {
         int parentIndex = currentIndex >> 1;
 
         while (currentIndex > 0 && itemList[parentIndex].CompareTo(itemList[currentIndex]) > 0)
@@ -35,38 +40,33 @@ public class BinaryHeap<T> where T : IComparable<T>
 
         itemList[0] = itemList[count];
         int current = 0;
-        while ((current + 1 << 1) + 1 <= count)
-        {
-            int leftChild = current + 1 << 1;
-            int rightChild = leftChild + 1;
-
-            int minChildIndex = itemList[leftChild].CompareTo(itemList[rightChild]) > 0 ? rightChild : leftChild;
-            if (itemList[minChildIndex].CompareTo(itemList[current]) > 0)
-            {
-                return targetNode;
-            }
-
-            SwapNode(current, minChildIndex);
-
-            current = minChildIndex;
-        }
-
+        Sink(current);
         return targetNode;
     }
 
-    public void UpdateHead(int index)
+    private void Sink(int currentIndex)
     {
-        while (index > 0)
+        while ((currentIndex << 1) + 2 <= count)
         {
-            int parent = index >> 1;
-            if (itemList[index].CompareTo(itemList[parent]) > 0)
+            int leftChild = (currentIndex << 1) + 1;
+            int rightChild = leftChild + 1;
+
+            int minChildIndex = itemList[leftChild].CompareTo(itemList[rightChild]) > 0 ? rightChild : leftChild;
+            if (itemList[minChildIndex].CompareTo(itemList[currentIndex]) > 0)
             {
                 break;
             }
 
-            SwapNode(index, parent);
-            index = parent;
+            SwapNode(currentIndex, minChildIndex);
+
+            currentIndex = minChildIndex;
         }
+    }
+
+    public void UpdateHead(int index)
+    {
+        Ascent(index);
+        Sink(index);
     }
 
     public void UpdateHead(T node)
