@@ -71,8 +71,6 @@ public class Cat : BaseRole
 
     private Vector3 moveDir;
 
-    private int moveIndex;
-
     private void MouseClickCallback(Vector3 endPos)
     {
         movePosList = App.Make<MapManager>().FindPath(transform.position, endPos);
