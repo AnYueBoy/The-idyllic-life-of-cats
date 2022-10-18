@@ -133,6 +133,7 @@ GameObject:
   m_Component:
   - component: {fileID: 56487484}
   - component: {fileID: 56487485}
+  - component: {fileID: 56487486}
   m_Layer: 0
   m_Name: NodeManager
   m_TagString: Untagged
@@ -167,11 +168,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a70d5b7e2824a18be842b2fa51de061, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &56487486
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 56487483}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cee666dad8b4317a947b82c89743d1e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   worldUITrans: {fileID: 608305683}
   roleLayerTrans: {fileID: 70790526}
   mapLayerTrans: {fileID: 1015839674}
-  pathTile: {fileID: 11400000, guid: b993ee8b748e593488c7cfdbcc2cbc0b, type: 2}
   canvasLayer: {fileID: 1039434032}
+  pathTile: {fileID: 11400000, guid: b993ee8b748e593488c7cfdbcc2cbc0b, type: 2}
 --- !u!1 &70790525
 GameObject:
   m_ObjectHideFlags: 0

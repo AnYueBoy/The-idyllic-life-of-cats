@@ -1,25 +1,14 @@
 ﻿using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public class NodeManager : IManager
+public class NodeManager : MonoBehaviour, IManager
 {
-    private Transform worldUITrans;
-    private Transform roleLayerTrans;
-    private Transform mapLayerTrans;
-    private Canvas canvasLayer;
+    [SerializeField] private Transform worldUITrans;
+    [SerializeField] private Transform roleLayerTrans;
+    [SerializeField] private Transform mapLayerTrans;
+    [SerializeField] private Canvas canvasLayer;
 
     public Tile pathTile;
-
-
-    public void Inject(Transform worldUITrans, Transform roleLayerTrans, Transform mapLayerTrans, Tile pathTile,
-        Canvas canvasLayer)
-    {
-        this.worldUITrans = worldUITrans;
-        this.roleLayerTrans = roleLayerTrans;
-        this.mapLayerTrans = mapLayerTrans;
-        this.pathTile = pathTile;
-        this.canvasLayer = canvasLayer;
-    }
 
     public void Init()
     {

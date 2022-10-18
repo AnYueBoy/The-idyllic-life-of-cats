@@ -37,9 +37,10 @@ namespace BitFramework.Runtime
             base.Register(provider, force);
         }
 
-        protected override bool IsUnableType(Type type)
-        {
-            return typeof(UComponent).IsAssignableFrom(type) || base.IsUnableType(type);
-        }
+        // FIXME: 此方法隔离具体服务与MonoBehavior的继承关系，但过于繁琐
+        // protected override bool IsUnableType(Type type)
+        // {
+        //     return typeof(UComponent).IsAssignableFrom(type) || base.IsUnableType(type);
+        // }
     }
 }
