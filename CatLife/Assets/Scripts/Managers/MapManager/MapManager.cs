@@ -8,7 +8,7 @@ using UnityEngine;
 public class MapManager : MonoBehaviour, IManager
 {
     [SerializeField] private bool isOpenDebug;
-    [SerializeField] private bool useJps;
+    [SerializeField] private bool useJps = true;
 
     public void Init()
     {
