@@ -182,11 +182,6 @@ public class PathFinding
 
     private NodeCell Jump(NodeCell curNode, NodeCell parentNode, NodeCell endNode)
     {
-        if (curNode == null)
-        {
-            return null;
-        }
-
         int x = curNode.x;
         int y = curNode.y;
         int dx = curNode.x - parentNode.x;
@@ -279,28 +274,19 @@ public class PathFinding
                     neighbours.Add(nodeCellArray[curNode.x + dx, curNode.y]);
                 }
 
-                if (neighbourUp || neighbourRight)
+                if ((neighbourUp || neighbourRight) && IsCanReachable(curNode.x + dx, curNode.y + dy))
                 {
-                    if (IsCanReachable(curNode.x + dx, curNode.y + dy))
-                    {
-                        neighbours.Add(nodeCellArray[curNode.x + dx, curNode.y + dy]);
-                    }
+                    neighbours.Add(nodeCellArray[curNode.x + dx, curNode.y + dy]);
                 }
 
-                if (!neighbourLeft && neighbourUp)
+                if (!neighbourLeft && neighbourUp && IsCanReachable(curNode.x - dx, curNode.y + dy))
                 {
-                    if (IsCanReachable(curNode.x - dx, curNode.y + dy))
-                    {
-                        neighbours.Add(nodeCellArray[curNode.x - dx, curNode.y + dy]);
-                    }
+                    neighbours.Add(nodeCellArray[curNode.x - dx, curNode.y + dy]);
                 }
 
-                if (!neighbourDown && neighbourRight)
+                if (!neighbourDown && neighbourRight && IsCanReachable(curNode.x + dx, curNode.y - dy))
                 {
-                    if (IsCanReachable(curNode.x + dx, curNode.y - dy))
-                    {
-                        neighbours.Add(nodeCellArray[curNode.x + dx, curNode.y - dy]);
-                    }
+                    neighbours.Add(nodeCellArray[curNode.x + dx, curNode.y - dy]);
                 }
             }
             // 直线移动
@@ -312,6 +298,7 @@ public class PathFinding
                     if (IsCanReachable(curNode.x, curNode.y + dy))
                     {
                         neighbours.Add(nodeCellArray[curNode.x, curNode.y + dy]);
+
                         if (!IsCanReachable(curNode.x + 1, curNode.y) && IsCanReachable(curNode.x + 1, curNode.y + dy))
                         {
                             neighbours.Add(nodeCellArray[curNode.x + 1, curNode.y + dy]);
@@ -328,6 +315,7 @@ public class PathFinding
                     if (IsCanReachable(curNode.x + dx, curNode.y))
                     {
                         neighbours.Add(nodeCellArray[curNode.x + dx, curNode.y]);
+
                         if (!IsCanReachable(curNode.x, curNode.y + 1) && IsCanReachable(curNode.x + dx, curNode.y + 1))
                         {
                             neighbours.Add(nodeCellArray[curNode.x + dx, curNode.y + 1]);
