@@ -117,7 +117,7 @@ public class MapManager : MonoBehaviour, IManager
 
     private void DrawPathPoint(List<Vector3> pathPosList)
     {
-        if (!isOpenDebug)
+        if (!isOpenDebug || pathPosList == null)
         {
             return;
         }
