@@ -126,7 +126,7 @@ public class PathFinding
     {
         List<NodeCell> closeList = new List<NodeCell>();
         binaryHeap.Clear();
-
+        startCell.Reset();
         binaryHeap.Push(startCell);
 
         while (binaryHeap.Count > 0)
