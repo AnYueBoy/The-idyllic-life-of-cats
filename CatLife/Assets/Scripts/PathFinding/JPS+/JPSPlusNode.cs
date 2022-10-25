@@ -8,6 +8,10 @@ public class JPSPlusNode
 
     public Vector3 pos;
 
+    public int x;
+    public int y;
+    public Vector3Int mappingTileIndex;
+
     public int gCost;
     public int hCost;
 
@@ -30,6 +34,15 @@ public class JPSPlusNode
     /// 从父节点扩展到此的方向
     /// </summary>
     public Directions directionFromParent;
+
+    public JPSPlusNode(bool isObstacle, Vector3 pos, int x, int y, Vector3Int mappingTileIndex)
+    {
+        this.isObstacle = isObstacle;
+        this.pos = pos;
+        this.x = x;
+        this.y = y;
+        this.mappingTileIndex = mappingTileIndex;
+    }
 }
 
 public enum Directions

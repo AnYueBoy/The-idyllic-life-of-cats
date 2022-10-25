@@ -55,31 +55,65 @@ public class MapManager : MonoBehaviour, IManager
         pathFinding.Init(tileMapSize.x, tileMapSize.y, mapNodeCellArray);
     }
 
+    #region JPS+
+
     private Dictionary<Directions, Directions[]> validDirLookUpTable = new Dictionary<Directions, Directions[]>
     {
         {
-            Directions.DOWN, new[] { Directions.LEFT, Directions.LEFT_DOWN, Directions.DOWN, Directions.RIGHT_DOWN, Directions.RIGHT }
+            Directions.DOWN,
+            new[] { Directions.LEFT, Directions.LEFT_DOWN, Directions.DOWN, Directions.RIGHT_DOWN, Directions.RIGHT }
         },
         { Directions.RIGHT_DOWN, new[] { Directions.DOWN, Directions.RIGHT_DOWN, Directions.RIGHT } },
         {
-            Directions.RIGHT, new[] { Directions.DOWN, Directions.RIGHT_DOWN, Directions.RIGHT, Directions.RIGHT_UP, Directions.UP }
+            Directions.RIGHT,
+            new[] { Directions.DOWN, Directions.RIGHT_DOWN, Directions.RIGHT, Directions.RIGHT_UP, Directions.UP }
         },
         { Directions.RIGHT_UP, new[] { Directions.RIGHT, Directions.RIGHT_UP, Directions.UP } },
         {
-            Directions.UP, new[] { Directions.RIGHT, Directions.RIGHT_UP, Directions.UP, Directions.LEFT_UP, Directions.LEFT }
+            Directions.UP,
+            new[] { Directions.RIGHT, Directions.RIGHT_UP, Directions.UP, Directions.LEFT_UP, Directions.LEFT }
         },
         { Directions.LEFT_UP, new[] { Directions.UP, Directions.LEFT_UP, Directions.LEFT } },
         {
-            Directions.LEFT, new[] { Directions.UP, Directions.LEFT_UP, Directions.LEFT, Directions.LEFT_DOWN, Directions.DOWN }
+            Directions.LEFT,
+            new[] { Directions.UP, Directions.LEFT_UP, Directions.LEFT, Directions.LEFT_DOWN, Directions.DOWN }
         },
         { Directions.LEFT_DOWN, new[] { Directions.LEFT, Directions.LEFT_DOWN, Directions.DOWN } }
     };
 
     private Directions[] allDirections = Enum.GetValues(typeof(Directions)).Cast<Directions>().ToArray();
+
+    private JPSPlusPathFinding jpsPlusPathFinding;
+
     private void PreprocessMap()
     {
         // 预处理地图信息
+        leftBottomIndex = curMap.GroundTileMap.origin;
+        tileMapSize = curMap.GroundTileMap.size;
+
+        var jpsPlusMapArray = new JPSPlusNode[tileMapSize.x, tileMapSize.y];
+
+        for (int x = leftBottomIndex.x; x < leftBottomIndex.x + tileMapSize.x; x++)
+        {
+            for (int y = leftBottomIndex.y; y < leftBottomIndex.y + tileMapSize.y; y++)
+            {
+                bool isObstacle = IsObstacle(x, y);
+                Vector3 pos = GetPosByTileIndex(x, y);
+
+                Vector2Int nodeCellIndex = ConvertTileIndexToCellIndex(x, y);
+                jpsPlusMapArray[nodeCellIndex.x, nodeCellIndex.y] = new JPSPlusNode(isObstacle, pos, nodeCellIndex.x,
+                    nodeCellIndex.y, new Vector3Int(x, y, 0));
+            }
+        }
+        
     }
+
+    private void BuildPrimaryJumpPoints()
+    {
+        
+    }
+
+    #endregion
 
     private bool IsObstacle(int x, int y)
     {
