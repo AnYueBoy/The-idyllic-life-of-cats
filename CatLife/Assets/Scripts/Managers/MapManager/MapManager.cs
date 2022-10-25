@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using BitFramework.Component.AssetsModule;
 using BitFramework.Component.ObjectPoolModule;
 using BitFramework.Core;
@@ -52,6 +53,32 @@ public class MapManager : MonoBehaviour, IManager
         }
 
         pathFinding.Init(tileMapSize.x, tileMapSize.y, mapNodeCellArray);
+    }
+
+    private Dictionary<Directions, Directions[]> validDirLookUpTable = new Dictionary<Directions, Directions[]>
+    {
+        {
+            Directions.DOWN, new[] { Directions.LEFT, Directions.LEFT_DOWN, Directions.DOWN, Directions.RIGHT_DOWN, Directions.RIGHT }
+        },
+        { Directions.RIGHT_DOWN, new[] { Directions.DOWN, Directions.RIGHT_DOWN, Directions.RIGHT } },
+        {
+            Directions.RIGHT, new[] { Directions.DOWN, Directions.RIGHT_DOWN, Directions.RIGHT, Directions.RIGHT_UP, Directions.UP }
+        },
+        { Directions.RIGHT_UP, new[] { Directions.RIGHT, Directions.RIGHT_UP, Directions.UP } },
+        {
+            Directions.UP, new[] { Directions.RIGHT, Directions.RIGHT_UP, Directions.UP, Directions.LEFT_UP, Directions.LEFT }
+        },
+        { Directions.LEFT_UP, new[] { Directions.UP, Directions.LEFT_UP, Directions.LEFT } },
+        {
+            Directions.LEFT, new[] { Directions.UP, Directions.LEFT_UP, Directions.LEFT, Directions.LEFT_DOWN, Directions.DOWN }
+        },
+        { Directions.LEFT_DOWN, new[] { Directions.LEFT, Directions.LEFT_DOWN, Directions.DOWN } }
+    };
+
+    private Directions[] allDirections = Enum.GetValues(typeof(Directions)).Cast<Directions>().ToArray();
+    private void PreprocessMap()
+    {
+        // 预处理地图信息
     }
 
     private bool IsObstacle(int x, int y)
