@@ -9,7 +9,8 @@ using UnityEngine;
 public class MapManager : MonoBehaviour, IManager
 {
     [SerializeField] private bool isOpenDebug;
-    [SerializeField] private bool useJps = true;
+    [SerializeField] private bool useJPS;
+    [SerializeField] private bool useJPSPlus;
 
     public void Init()
     {
@@ -52,7 +53,10 @@ public class MapManager : MonoBehaviour, IManager
 
         // 平面直角坐标系 x轴向右 y轴向上
         var mapNodeCellArray = new NodeCell[column, row];
-        jpsMapNodeArray = new JPSPlusNode[column, row];
+        if (useJPSPlus)
+        {
+            jpsMapNodeArray = new JPSPlusNode[column, row];
+        }
 
         for (int x = leftBottomIndex.x; x < leftBottomIndex.x + column; x++)
         {
@@ -68,44 +72,30 @@ public class MapManager : MonoBehaviour, IManager
                     new NodeCell(isObstacle, pos, nodeCellIndex.x, nodeCellIndex.y, new Vector3Int(x, y, 0));
 
                 // 构建JPS+的节点信息
-                jpsMapNodeArray[nodeCellIndex.x, nodeCellIndex.y] = new JPSPlusNode(isObstacle, pos, nodeCellIndex.x,
-                    nodeCellIndex.y, new Vector3Int(x, y, 0));
+                if (useJPSPlus)
+                {
+                    jpsMapNodeArray[nodeCellIndex.x, nodeCellIndex.y] = new JPSPlusNode(isObstacle, pos,
+                        nodeCellIndex.x,
+                        nodeCellIndex.y, new Vector3Int(x, y, 0));
+                }
             }
         }
 
-        pathFinding.Init(column, row, mapNodeCellArray);
+        if (useJPSPlus)
+        {
+            BuildPrimaryJumpPoints();
+            BuildStraightJumpPoint();
+            BuildDiagonalJumpPoint();
+        }
+
+        pathFinding.Init(column, row, mapNodeCellArray, jpsMapNodeArray);
     }
 
-    #region JPS+
+    #region JPS+ Preprocess Map
 
-    private Dictionary<Directions, Directions[]> validDirLookUpTable = new Dictionary<Directions, Directions[]>
-    {
-        {
-            Directions.DOWN,
-            new[] { Directions.LEFT, Directions.LEFT_DOWN, Directions.DOWN, Directions.RIGHT_DOWN, Directions.RIGHT }
-        },
-        { Directions.RIGHT_DOWN, new[] { Directions.DOWN, Directions.RIGHT_DOWN, Directions.RIGHT } },
-        {
-            Directions.RIGHT,
-            new[] { Directions.DOWN, Directions.RIGHT_DOWN, Directions.RIGHT, Directions.RIGHT_UP, Directions.UP }
-        },
-        { Directions.RIGHT_UP, new[] { Directions.RIGHT, Directions.RIGHT_UP, Directions.UP } },
-        {
-            Directions.UP,
-            new[] { Directions.RIGHT, Directions.RIGHT_UP, Directions.UP, Directions.LEFT_UP, Directions.LEFT }
-        },
-        { Directions.LEFT_UP, new[] { Directions.UP, Directions.LEFT_UP, Directions.LEFT } },
-        {
-            Directions.LEFT,
-            new[] { Directions.UP, Directions.LEFT_UP, Directions.LEFT, Directions.LEFT_DOWN, Directions.DOWN }
-        },
-        { Directions.LEFT_DOWN, new[] { Directions.LEFT, Directions.LEFT_DOWN, Directions.DOWN } }
-    };
-
-    private Directions[] allDirections = Enum.GetValues(typeof(Directions)).Cast<Directions>().ToArray();
+   
 
     private JPSPlusNode[,] jpsMapNodeArray;
-    private JPSPlusPathFinding jpsPlusPathFinding;
 
     private void BuildPrimaryJumpPoints()
     {
@@ -475,7 +465,7 @@ public class MapManager : MonoBehaviour, IManager
         var startNodeArrayIndex = ConvertTileIndexToCellIndex(startCellIndex.x, startCellIndex.y);
         var endNodeArrayIndex = ConvertTileIndexToCellIndex(endCellIndex.x, endCellIndex.y);
         List<Vector3> pathPosList;
-        if (useJps)
+        if (useJPS)
         {
             pathPosList = pathFinding.FindPathByJps(startNodeArrayIndex, endNodeArrayIndex);
         }

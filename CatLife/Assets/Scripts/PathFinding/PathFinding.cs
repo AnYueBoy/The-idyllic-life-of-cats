@@ -1,12 +1,16 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class PathFinding
 {
     private NodeCell[,] nodeCellArray;
+    private JPSPlusNode[,] jpsPluMapNodeArray;
     private int horizontalValue;
     private int verticalValue;
     private BinaryHeap<NodeCell> binaryHeap;
+    private BinaryHeap<JPSPlusNode> jpsPlusHeap;
 
     private readonly List<Vector2Int> directionList = new List<Vector2Int>()
     {
@@ -25,12 +29,14 @@ public class PathFinding
         new Vector2Int(1, 1),
     };
 
-    public void Init(int horizontalValue, int verticalValue, NodeCell[,] nodeCellArray)
+    public void Init(int horizontalValue, int verticalValue, NodeCell[,] nodeCellArray, JPSPlusNode[,] jpsMapNodeArray)
     {
         this.horizontalValue = horizontalValue;
         this.verticalValue = verticalValue;
         this.nodeCellArray = nodeCellArray;
+        this.jpsPluMapNodeArray = jpsMapNodeArray;
         binaryHeap = new BinaryHeap<NodeCell>();
+        jpsPlusHeap = new BinaryHeap<JPSPlusNode>();
     }
 
     #region A*寻路
@@ -350,13 +356,247 @@ public class PathFinding
 
     #endregion
 
+    #region JPS+
+
+    private Dictionary<Directions, Directions[]> validDirLookUpTable = new Dictionary<Directions, Directions[]>
+    {
+        {
+            Directions.DOWN,
+            new[] { Directions.LEFT, Directions.LEFT_DOWN, Directions.DOWN, Directions.RIGHT_DOWN, Directions.RIGHT }
+        },
+        { Directions.RIGHT_DOWN, new[] { Directions.DOWN, Directions.RIGHT_DOWN, Directions.RIGHT } },
+        {
+            Directions.RIGHT,
+            new[] { Directions.DOWN, Directions.RIGHT_DOWN, Directions.RIGHT, Directions.RIGHT_UP, Directions.UP }
+        },
+        { Directions.RIGHT_UP, new[] { Directions.RIGHT, Directions.RIGHT_UP, Directions.UP } },
+        {
+            Directions.UP,
+            new[] { Directions.RIGHT, Directions.RIGHT_UP, Directions.UP, Directions.LEFT_UP, Directions.LEFT }
+        },
+        { Directions.LEFT_UP, new[] { Directions.UP, Directions.LEFT_UP, Directions.LEFT } },
+        {
+            Directions.LEFT,
+            new[] { Directions.UP, Directions.LEFT_UP, Directions.LEFT, Directions.LEFT_DOWN, Directions.DOWN }
+        },
+        { Directions.LEFT_DOWN, new[] { Directions.LEFT, Directions.LEFT_DOWN, Directions.DOWN } }
+    };
+
+    private Directions[] allDirections = Enum.GetValues(typeof(Directions)).Cast<Directions>().ToArray();
+
+    public List<Vector3> FindPathByJpsPlus(Vector2Int startTileIndex, Vector2Int endTileIndex)
+    {
+        return FindPathByJpsPlus(jpsPluMapNodeArray[startTileIndex.x, startTileIndex.y],
+            jpsPluMapNodeArray[endTileIndex.x, endTileIndex.y]);
+    }
+
+    public List<Vector3> FindPathByJpsPlus(JPSPlusNode startNode, JPSPlusNode endNode)
+    {
+        List<JPSPlusNode> closeList = new List<JPSPlusNode>();
+        jpsPlusHeap.Clear();
+        startNode.Reset();
+        jpsPlusHeap.Push(startNode);
+
+        while (jpsPlusHeap.Count > 0)
+        {
+            var curNode = jpsPlusHeap.Pop();
+            closeList.Add(curNode);
+
+            if (curNode == endNode)
+            {
+                // 生成路径
+                return GeneratePath(startNode, endNode);
+            }
+
+            foreach (var dir in GetAllValidDirections(curNode))
+            {
+                JPSPlusNode newSuccessor = null;
+                int gCost = 0;
+
+                // FIXME:
+                if (IsCardinal(dir) && GoalIsInExactDirection(curNode, dir, endNode))
+                {
+                }
+                else if (IsDiagonal(dir) && GoalIsInGeneralDirection(curNode, dir, endNode) &&
+                         (Mathf.Abs(endNode.y - curNode.y) <= Mathf.Abs(curNode.distances[(int)dir]) ||
+                          Mathf.Abs(endNode.x - curNode.x) <= Mathf.Abs(curNode.distances[(int)dir])))
+                {
+                    int minDiff = Mathf.Min(Mathf.Abs(endNode.y - curNode.y), Mathf.Abs(endNode.x - curNode.x));
+                    newSuccessor = GetJPSNodeByDis(curNode, dir, minDiff);
+                    // FIXME:
+                    gCost = curNode.gCost + GetManhattan(curNode, newSuccessor);
+                }
+                else if (curNode.distances[(int)dir] > 0)
+                {
+                    newSuccessor = GetJPSNodeByDis(curNode, dir, curNode.distances[(int)dir]);
+                    // FIXME:
+                    gCost = GetManhattan(curNode, newSuccessor);
+                    if (IsDiagonal(dir))
+                    {
+                        // FIXME:
+                        gCost *= 1;
+                    }
+
+                    gCost += curNode.gCost;
+                }
+
+                // A星寻路逻辑
+                if (newSuccessor != null && !closeList.Contains(newSuccessor))
+                {
+                    if (!jpsPlusHeap.Contains(newSuccessor) || gCost < newSuccessor.gCost)
+                    {
+                        newSuccessor.parent = curNode;
+                        newSuccessor.gCost = gCost;
+                        newSuccessor.directionFromParent = dir;
+                        newSuccessor.fCost = gCost + GetManhattan(newSuccessor, endNode);
+                        jpsPlusHeap.Push(newSuccessor);
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private JPSPlusNode GetJPSNodeByDis(JPSPlusNode curNode, Directions dir, int distance)
+    {
+        int x = curNode.x;
+        int y = curNode.y;
+        switch (dir)
+        {
+            case Directions.UP:
+                y += distance;
+                break;
+
+            case Directions.DOWN:
+                y -= distance;
+                break;
+
+            case Directions.LEFT:
+                x -= distance;
+                break;
+
+            case Directions.RIGHT:
+                x += distance;
+                break;
+
+            case Directions.LEFT_UP:
+                x -= distance;
+                y += distance;
+                break;
+
+            case Directions.RIGHT_UP:
+                x += distance;
+                y += distance;
+                break;
+
+            case Directions.LEFT_DOWN:
+                x -= distance;
+                y -= distance;
+                break;
+
+            case Directions.RIGHT_DOWN:
+                x += distance;
+                y -= distance;
+                break;
+        }
+
+        if (IsInBound(x, y))
+        {
+            return jpsPluMapNodeArray[x, y];
+        }
+
+        return null;
+    }
+
+    private bool IsInBound(int x, int y)
+    {
+        if (x < 0 || y < 0 || x >= horizontalValue || y >= verticalValue)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    private bool IsCardinal(Directions dir)
+    {
+        switch (dir)
+        {
+            case Directions.UP:
+            case Directions.DOWN:
+            case Directions.LEFT:
+            case Directions.RIGHT:
+                return true;
+        }
+
+        return false;
+    }
+
+    private bool IsDiagonal(Directions dir)
+    {
+        switch (dir)
+        {
+            case Directions.RIGHT_DOWN:
+            case Directions.LEFT_DOWN:
+            case Directions.LEFT_UP:
+            case Directions.RIGHT_UP:
+                return true;
+        }
+
+        return false;
+    }
+
+    private bool GoalIsInExactDirection(JPSPlusNode curNode, Directions dir, JPSPlusNode goalNode)
+    {
+        int diffX = goalNode.x - curNode.x;
+        int diffY = goalNode.y - curNode.y;
+
+        switch (dir)
+        {
+        }
+
+        return false;
+    }
+
+    private bool GoalIsInGeneralDirection(JPSPlusNode curNode, Directions dir, JPSPlusNode goalNode)
+    {
+        return false;
+    }
+
+    private Directions[] GetAllValidDirections(JPSPlusNode curNode)
+    {
+        return curNode.parent == null ? allDirections : validDirLookUpTable[curNode.directionFromParent];
+    }
+
+    #endregion
 
     private int GetManhattan(NodeCell curNode, NodeCell endCell)
     {
         return Mathf.Abs(endCell.x - curNode.x) * 10 + Mathf.Abs(endCell.y - curNode.y) * 10;
     }
 
+    private int GetManhattan(JPSPlusNode curNode, JPSPlusNode endNode)
+    {
+        return Mathf.Abs(endNode.x - curNode.x) * 10 + Mathf.Abs(endNode.y - curNode.y) * 10;
+    }
+
     private List<Vector3> GeneratePath(NodeCell startNode, NodeCell endNode)
+    {
+        List<Vector3> path = new List<Vector3>();
+        while (endNode != startNode)
+        {
+            path.Add(endNode.pos);
+            var parent = endNode.parent;
+            endNode.Reset();
+            endNode = parent;
+        }
+
+        path.Reverse();
+        return path;
+    }
+
+    private List<Vector3> GeneratePath(JPSPlusNode startNode, JPSPlusNode endNode)
     {
         List<Vector3> path = new List<Vector3>();
         while (endNode != startNode)

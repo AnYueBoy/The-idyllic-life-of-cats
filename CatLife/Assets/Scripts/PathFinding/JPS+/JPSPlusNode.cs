@@ -1,6 +1,7 @@
+using System;
 using UnityEngine;
 
-public class JPSPlusNode
+public class JPSPlusNode : IComparable<JPSPlusNode>
 {
     public JPSPlusNode parent;
 
@@ -13,7 +14,7 @@ public class JPSPlusNode
     public Vector3Int mappingTileIndex;
 
     public int gCost;
-    public int hCost;
+    public int fCost;
 
     /// <summary>
     /// 八方向的距离值
@@ -48,6 +49,17 @@ public class JPSPlusNode
     {
         // 是否是此方向的跳点
         return isJumpPoint && jumpPointDirection[(int)dir];
+    }
+
+    public void Reset()
+    {
+        parent = null;
+        gCost = fCost = 0;
+    }
+
+    public int CompareTo(JPSPlusNode other)
+    {
+        return fCost - other.fCost;
     }
 }
 
