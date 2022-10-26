@@ -413,10 +413,14 @@ public class PathFinding
                 JPSPlusNode newSuccessor = null;
                 int gCost = 0;
 
-                // FIXME:
-                if (IsCardinal(dir) && GoalIsInExactDirection(curNode, dir, endNode))
+                // 如果当前方向为基本方向 且 当前节点与目标节点方向为方正方向 且 当前节点与目标节点的距离<=当前节点的下一个跳点/墙的距离
+                if (IsCardinal(dir) && GoalIsInExactDirection(curNode, dir, endNode) &&
+                    JPSPlusNode.Diff(curNode, endNode) <= Mathf.Abs(curNode.distances[(int)dir]))
                 {
+                    newSuccessor = endNode;
+                    gCost = curNode.gCost + JPSPlusNode.Diff(curNode, endNode);
                 }
+                // 如果当前方向为对角线方向 且 当前节点与目标接地那的方向为通用方向 且 当前节点与目标节点的行/列间距<=当前节点的下一个跳点/墙的距离
                 else if (IsDiagonal(dir) && GoalIsInGeneralDirection(curNode, dir, endNode) &&
                          (Mathf.Abs(endNode.y - curNode.y) <= Mathf.Abs(curNode.distances[(int)dir]) ||
                           Mathf.Abs(endNode.x - curNode.x) <= Mathf.Abs(curNode.distances[(int)dir])))
@@ -547,20 +551,77 @@ public class PathFinding
         return false;
     }
 
+    /// <summary>
+    /// 目标与当前节点处于方正方向
+    /// </summary>
     private bool GoalIsInExactDirection(JPSPlusNode curNode, Directions dir, JPSPlusNode goalNode)
     {
         int diffX = goalNode.x - curNode.x;
         int diffY = goalNode.y - curNode.y;
-
         switch (dir)
         {
+            case Directions.UP:
+                return diffX == 0 && diffY > 0;
+
+            case Directions.DOWN:
+                return diffX == 0 && diffY < 0;
+
+            case Directions.LEFT:
+                return diffX < 0 && diffY == 0;
+
+            case Directions.RIGHT:
+                return diffX > 0 && diffY == 0;
+
+            case Directions.LEFT_UP:
+                return diffX < 0 && diffY > 0 && Mathf.Abs(diffX) == Mathf.Abs(diffY);
+
+            case Directions.RIGHT_UP:
+                return diffX > 0 && diffY > 0 && Mathf.Abs(diffX) == Mathf.Abs(diffY);
+
+            case Directions.LEFT_DOWN:
+                return diffX < 0 && diffY < 0 && Mathf.Abs(diffX) == Mathf.Abs(diffY);
+
+            case Directions.RIGHT_DOWN:
+                return diffX > 0 && diffY < 0 && Mathf.Abs(diffX) == Mathf.Abs(diffY);
         }
 
         return false;
     }
 
+    /// <summary>
+    /// 目标节点与当前节点通用方向
+    /// </summary>
     private bool GoalIsInGeneralDirection(JPSPlusNode curNode, Directions dir, JPSPlusNode goalNode)
     {
+        int diffX = goalNode.x - curNode.x;
+        int diffY = goalNode.y - curNode.y;
+        switch (dir)
+        {
+            case Directions.UP:
+                return diffX == 0 && diffY > 0;
+
+            case Directions.DOWN:
+                return diffX == 0 && diffY < 0;
+
+            case Directions.LEFT:
+                return diffX < 0 && diffY == 0;
+
+            case Directions.RIGHT:
+                return diffX > 0 && diffY == 0;
+
+            case Directions.LEFT_UP:
+                return diffX < 0 && diffY > 0;
+
+            case Directions.RIGHT_UP:
+                return diffX > 0 && diffY > 0;
+
+            case Directions.LEFT_DOWN:
+                return diffX < 0 && diffY < 0;
+
+            case Directions.RIGHT_DOWN:
+                return diffX > 0 && diffY < 0;
+        }
+
         return false;
     }
 

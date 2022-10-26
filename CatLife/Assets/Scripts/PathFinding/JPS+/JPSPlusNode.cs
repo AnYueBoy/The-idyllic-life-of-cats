@@ -51,6 +51,14 @@ public class JPSPlusNode : IComparable<JPSPlusNode>
         return isJumpPoint && jumpPointDirection[(int)dir];
     }
 
+    /// <summary>
+    /// 返回两节点行间距或列间距的最大值
+    /// </summary>
+    public static int Diff(JPSPlusNode a, JPSPlusNode b)
+    {
+        return Mathf.Max(Mathf.Abs(b.x - a.x), Mathf.Abs(b.y - a.y));
+    }
+
     public void Reset()
     {
         parent = null;
