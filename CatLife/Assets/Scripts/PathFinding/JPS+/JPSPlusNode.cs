@@ -43,6 +43,12 @@ public class JPSPlusNode
         this.y = y;
         this.mappingTileIndex = mappingTileIndex;
     }
+
+    public bool isJumpPointComingFrom(Directions dir)
+    {
+        // 是否是此方向的跳点
+        return isJumpPoint && jumpPointDirection[(int)dir];
+    }
 }
 
 public enum Directions
