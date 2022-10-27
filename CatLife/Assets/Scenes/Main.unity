@@ -745,7 +745,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isOpenDebug: 1
-  useJps: 1
+  useJPS: 0
+  useJPSPlus: 0
 --- !u!114 &2068683122
 MonoBehaviour:
   m_ObjectHideFlags: 0

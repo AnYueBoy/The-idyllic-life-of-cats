@@ -93,8 +93,6 @@ public class MapManager : MonoBehaviour, IManager
 
     #region JPS+ Preprocess Map
 
-   
-
     private JPSPlusNode[,] jpsMapNodeArray;
 
     private void BuildPrimaryJumpPoints()
@@ -465,7 +463,11 @@ public class MapManager : MonoBehaviour, IManager
         var startNodeArrayIndex = ConvertTileIndexToCellIndex(startCellIndex.x, startCellIndex.y);
         var endNodeArrayIndex = ConvertTileIndexToCellIndex(endCellIndex.x, endCellIndex.y);
         List<Vector3> pathPosList;
-        if (useJPS)
+        if (useJPSPlus)
+        {
+            pathPosList = pathFinding.FindPathByJpsPlus(startNodeArrayIndex, endNodeArrayIndex);
+        }
+        else if (useJPS)
         {
             pathPosList = pathFinding.FindPathByJps(startNodeArrayIndex, endNodeArrayIndex);
         }
