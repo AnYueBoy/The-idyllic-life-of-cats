@@ -18,8 +18,19 @@ public class MapManager : MonoBehaviour, IManager
         InitMap();
     }
 
+    private List<Vector3> debugLineList;
+
     public void LocalUpdate(float dt)
     {
+        if (debugLineList == null || debugLineList.Count < 2)
+        {
+            return;
+        }
+
+        for (int i = 0; i < debugLineList.Count - 1; i++)
+        {
+            Debug.DrawLine(debugLineList[i], debugLineList[i + 1], Color.red, -1);
+        }
     }
 
     private void InitMap()
@@ -83,9 +94,13 @@ public class MapManager : MonoBehaviour, IManager
 
         if (useJPSPlus)
         {
-            BuildPrimaryJumpPoints();
-            BuildStraightJumpPoint();
-            BuildDiagonalJumpPoint();
+            // BuildPrimaryJumpPoints();
+            // BuildStraightJumpPoint();
+            // BuildDiagonalJumpPoint();
+            
+            BuildPrimaryDebugInfo();
+            BuildStraightDebugInfo();
+            BuildDiagonalDebugInfo();
         }
 
         pathFinding.Init(column, row, mapNodeCellArray, jpsMapNodeArray);
@@ -282,8 +297,6 @@ public class MapManager : MonoBehaviour, IManager
                 }
             }
         }
-
-        BuildStraightDebugInfo();
     }
 
     private void BuildDiagonalJumpPoint()
@@ -419,9 +432,9 @@ public class MapManager : MonoBehaviour, IManager
         return isInBound(x, y) && !jpsMapNodeArray[x, y].isObstacle;
     }
 
-    private void BuildStraightDebugInfo()
+    public void BuildPrimaryDebugInfo()
     {
-        return;
+        BuildPrimaryJumpPoints();
         GameObject prefab = App.Make<IAssetsManager>().GetAssetByUrlSync<GameObject>(AssetsPath.MapLocationPath);
         for (int x = 0; x < column; x++)
         {
@@ -438,6 +451,87 @@ public class MapManager : MonoBehaviour, IManager
                 }
             }
         }
+    }
+
+    public void BuildStraightDebugInfo()
+    {
+        BuildStraightJumpPoint();
+        for (int x = 0; x < column; x++)
+        {
+            for (int y = 0; y < row; y++)
+            {
+                JPSPlusNode node = jpsMapNodeArray[x, y];
+                for (Directions i = Directions.UP; i <= Directions.LEFT_UP; i++)
+                {
+                    int distance = node.distances[(int)i];
+                    if (distance == int.MinValue || node.debugInfo[(int)i] != null)
+                    {
+                        continue;
+                    }
+
+                    Vector2Int offset = GetDirOffset(i);
+                    GameObject infoNode = new GameObject();
+                    var infoComp = infoNode.AddComponent<TextMesh>();
+                    infoComp.fontSize = 170;
+                    infoComp.transform.localScale = Vector3.one * 0.01f;
+                    infoNode.transform.position = node.pos + new Vector3(offset.x * 0.3f, offset.y * 0.3f, -1);
+                    infoComp.text = distance.ToString();
+                    if (distance > 0)
+                    {
+                        infoComp.color = Color.blue;
+                    }
+                    else
+                    {
+                        infoComp.color = Color.red;
+                    }
+
+                    node.debugInfo[(int)i] = infoComp;
+                }
+            }
+        }
+    }
+
+    public void BuildDiagonalDebugInfo()
+    {
+        BuildDiagonalJumpPoint();
+        for (int x = 0; x < column; x++)
+        {
+            for (int y = 0; y < row; y++)
+            {
+                JPSPlusNode node = jpsMapNodeArray[x, y];
+                for (Directions i = Directions.UP; i <= Directions.LEFT_UP; i++)
+                {
+                    int distance = node.distances[(int)i];
+                    if (distance == int.MinValue || node.debugInfo[(int)i] != null)
+                    {
+                        continue;
+                    }
+
+                    Vector2Int offset = GetDirOffset(i);
+                    GameObject infoNode = new GameObject();
+                    var infoComp = infoNode.AddComponent<TextMesh>();
+                    infoComp.fontSize = 170;
+                    infoComp.transform.localScale = Vector3.one * 0.01f;
+                    infoNode.transform.position = node.pos + new Vector3(offset.x * 0.3f, offset.y * 0.3f, -1);
+                    infoComp.text = distance.ToString();
+                    if (distance > 0)
+                    {
+                        infoComp.color = Color.green;
+                    }
+                    else
+                    {
+                        infoComp.color = Color.red;
+                    }
+
+                    node.debugInfo[(int)i] = infoComp;
+                }
+            }
+        }
+    }
+
+    public void BuildLineDebugInfo()
+    {
+        debugLineList = pathFinding.FindPathByJpsPlus(new Vector2Int(0, 0), new Vector2Int(7, 3));
     }
 
     private Vector2Int GetDirOffset(Directions dir)
@@ -499,7 +593,9 @@ public class MapManager : MonoBehaviour, IManager
     private Vector2Int ConvertTileIndexToCellIndex(int tileX, int tileY)
     {
         int x = tileX + Mathf.Abs(leftBottomIndex.x);
+        x = Mathf.Clamp(x, 0, column - 1);
         int y = tileY + Mathf.Abs(leftBottomIndex.y);
+        y = Mathf.Clamp(y, 0, row - 1);
         return new Vector2Int(x, y);
     }
 

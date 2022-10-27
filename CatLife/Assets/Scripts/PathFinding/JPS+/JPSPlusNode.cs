@@ -36,6 +36,8 @@ public class JPSPlusNode : IComparable<JPSPlusNode>
     /// </summary>
     public Directions directionFromParent;
 
+    public TextMesh[] debugInfo = new TextMesh[8];
+
     public JPSPlusNode(bool isObstacle, Vector3 pos, int x, int y, Vector3Int mappingTileIndex)
     {
         this.isObstacle = isObstacle;
@@ -43,6 +45,10 @@ public class JPSPlusNode : IComparable<JPSPlusNode>
         this.x = x;
         this.y = y;
         this.mappingTileIndex = mappingTileIndex;
+        for (int i = 0; i < distances.Length; i++)
+        {
+            distances[i] = int.MinValue;
+        }
     }
 
     public bool isJumpPointComingFrom(Directions dir)
