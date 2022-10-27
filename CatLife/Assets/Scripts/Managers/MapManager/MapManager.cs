@@ -111,7 +111,7 @@ public class MapManager : MonoBehaviour, IManager
                 // 主要跳点为论文中的八种情况，但可两两合并。
 
                 // 相对障碍的右上角情况
-                if (isEmpty(x + 1, y + 1) && isEmpty(x, y - 1) && isEmpty(x - 1, y))
+                if (isEmpty(x + 1, y + 1) && isEmpty(x, y + 1) && isEmpty(x + 1, y))
                 {
                     JPSPlusNode node = jpsMapNodeArray[x + 1, y + 1];
                     node.isJumpPoint = true;
@@ -282,6 +282,8 @@ public class MapManager : MonoBehaviour, IManager
                 }
             }
         }
+
+        BuildStraightDebugInfo();
     }
 
     private void BuildDiagonalJumpPoint()
@@ -415,6 +417,52 @@ public class MapManager : MonoBehaviour, IManager
     private bool isEmpty(int x, int y)
     {
         return isInBound(x, y) && !jpsMapNodeArray[x, y].isObstacle;
+    }
+
+    private void BuildStraightDebugInfo()
+    {
+        return;
+        GameObject prefab = App.Make<IAssetsManager>().GetAssetByUrlSync<GameObject>(AssetsPath.MapLocationPath);
+        for (int x = 0; x < column; x++)
+        {
+            for (int y = 0; y < row; y++)
+            {
+                JPSPlusNode node = jpsMapNodeArray[x, y];
+                for (Directions i = Directions.UP; i <= Directions.LEFT_UP; i++)
+                {
+                    if (node.isJumpPoint)
+                    {
+                        GameObject jumpPointNode = App.Make<IObjectPool>().RequestInstance(prefab);
+                        jumpPointNode.transform.position = node.pos;
+                    }
+                }
+            }
+        }
+    }
+
+    private Vector2Int GetDirOffset(Directions dir)
+    {
+        switch (dir)
+        {
+            case Directions.UP:
+                return new Vector2Int(0, 1);
+            case Directions.DOWN:
+                return new Vector2Int(0, -1);
+            case Directions.LEFT:
+                return new Vector2Int(-1, 0);
+            case Directions.RIGHT:
+                return new Vector2Int(1, 0);
+            case Directions.LEFT_UP:
+                return new Vector2Int(-1, 1);
+            case Directions.RIGHT_UP:
+                return new Vector2Int(1, 1);
+            case Directions.LEFT_DOWN:
+                return new Vector2Int(-1, -1);
+            case Directions.RIGHT_DOWN:
+                return new Vector2Int(1, -1);
+        }
+
+        return Vector2Int.zero;
     }
 
     #endregion

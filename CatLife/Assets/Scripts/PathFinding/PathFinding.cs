@@ -445,15 +445,23 @@ public class PathFinding
                 }
 
                 // A星寻路逻辑
-                if (newSuccessor != null && !closeList.Contains(newSuccessor))
+                if (newSuccessor != null)
                 {
-                    if (!jpsPlusHeap.Contains(newSuccessor) || gCost < newSuccessor.gCost)
+                    if (!jpsPlusHeap.Contains(newSuccessor) || !closeList.Contains(newSuccessor))
                     {
                         newSuccessor.parent = curNode;
                         newSuccessor.gCost = gCost;
                         newSuccessor.directionFromParent = dir;
                         newSuccessor.fCost = gCost + GetManhattan(newSuccessor, endNode);
                         jpsPlusHeap.Push(newSuccessor);
+                    }
+                    else if (gCost < newSuccessor.gCost)
+                    {
+                        newSuccessor.parent = curNode;
+                        newSuccessor.gCost = gCost;
+                        newSuccessor.directionFromParent = dir;
+                        newSuccessor.fCost = gCost + GetManhattan(newSuccessor, endNode);
+                        jpsPlusHeap.UpdateHead(newSuccessor);
                     }
                 }
             }
