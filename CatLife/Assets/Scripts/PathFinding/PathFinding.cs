@@ -427,21 +427,12 @@ public class PathFinding
                 {
                     int minDiff = Mathf.Min(Mathf.Abs(endNode.y - curNode.y), Mathf.Abs(endNode.x - curNode.x));
                     newSuccessor = GetJPSNodeByDis(curNode, dir, minDiff);
-                    // FIXME:
                     gCost = curNode.gCost + GetManhattan(curNode, newSuccessor);
                 }
                 else if (curNode.distances[(int)dir] > 0)
                 {
                     newSuccessor = GetJPSNodeByDis(curNode, dir, curNode.distances[(int)dir]);
-                    // FIXME:
-                    gCost = GetManhattan(curNode, newSuccessor);
-                    // if (IsDiagonal(dir))
-                    // {
-                    //     // FIXME:
-                    //     gCost *= 1;
-                    // }
-
-                    gCost += curNode.gCost;
+                    gCost = curNode.gCost + GetManhattan(curNode, newSuccessor);
                 }
 
                 // A星寻路逻辑
