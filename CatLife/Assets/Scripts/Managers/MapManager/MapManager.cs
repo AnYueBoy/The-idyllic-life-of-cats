@@ -18,19 +18,8 @@ public class MapManager : MonoBehaviour, IManager
         InitMap();
     }
 
-    private List<Vector3> debugLineList;
-
     public void LocalUpdate(float dt)
     {
-        if (debugLineList == null || debugLineList.Count < 2)
-        {
-            return;
-        }
-
-        for (int i = 0; i < debugLineList.Count - 1; i++)
-        {
-            Debug.DrawLine(debugLineList[i], debugLineList[i + 1], Color.red, -1);
-        }
     }
 
     private void InitMap()
@@ -94,13 +83,23 @@ public class MapManager : MonoBehaviour, IManager
 
         if (useJPSPlus)
         {
-            // BuildPrimaryJumpPoints();
-            // BuildStraightJumpPoint();
-            // BuildDiagonalJumpPoint();
-            
-            BuildPrimaryDebugInfo();
-            BuildStraightDebugInfo();
-            BuildDiagonalDebugInfo();
+            BuildPrimaryJumpPoints();
+            if (isOpenDebug)
+            {
+                BuildPrimaryDebugInfo();
+            }
+
+            BuildStraightJumpPoint();
+            if (isOpenDebug)
+            {
+                BuildStraightDebugInfo();
+            }
+
+            BuildDiagonalJumpPoint();
+            if (isOpenDebug)
+            {
+                BuildDiagonalDebugInfo();
+            }
         }
 
         pathFinding.Init(column, row, mapNodeCellArray, jpsMapNodeArray);
@@ -432,9 +431,8 @@ public class MapManager : MonoBehaviour, IManager
         return isInBound(x, y) && !jpsMapNodeArray[x, y].isObstacle;
     }
 
-    public void BuildPrimaryDebugInfo()
+    private void BuildPrimaryDebugInfo()
     {
-        BuildPrimaryJumpPoints();
         GameObject prefab = App.Make<IAssetsManager>().GetAssetByUrlSync<GameObject>(AssetsPath.MapLocationPath);
         for (int x = 0; x < column; x++)
         {
@@ -453,9 +451,8 @@ public class MapManager : MonoBehaviour, IManager
         }
     }
 
-    public void BuildStraightDebugInfo()
+    private void BuildStraightDebugInfo()
     {
-        BuildStraightJumpPoint();
         for (int x = 0; x < column; x++)
         {
             for (int y = 0; y < row; y++)
@@ -491,9 +488,8 @@ public class MapManager : MonoBehaviour, IManager
         }
     }
 
-    public void BuildDiagonalDebugInfo()
+    private void BuildDiagonalDebugInfo()
     {
-        BuildDiagonalJumpPoint();
         for (int x = 0; x < column; x++)
         {
             for (int y = 0; y < row; y++)
@@ -527,11 +523,6 @@ public class MapManager : MonoBehaviour, IManager
                 }
             }
         }
-    }
-
-    public void BuildLineDebugInfo()
-    {
-        debugLineList = pathFinding.FindPathByJpsPlus(new Vector2Int(0, 0), new Vector2Int(7, 3));
     }
 
     private Vector2Int GetDirOffset(Directions dir)
