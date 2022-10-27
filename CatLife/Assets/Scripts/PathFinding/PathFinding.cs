@@ -445,9 +445,9 @@ public class PathFinding
                 }
 
                 // A星寻路逻辑
-                if (newSuccessor != null)
+                if (newSuccessor != null && !closeList.Contains(newSuccessor))
                 {
-                    if (!jpsPlusHeap.Contains(newSuccessor) || !closeList.Contains(newSuccessor))
+                    if (!jpsPlusHeap.Contains(newSuccessor))
                     {
                         newSuccessor.parent = curNode;
                         newSuccessor.gCost = gCost;
