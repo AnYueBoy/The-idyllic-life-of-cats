@@ -30,7 +30,7 @@
     /// <summary>
     /// JPSPlus预处理的地图信息
     /// </summary>
-    public const string JPSPlusMapDirPath = "Map/JPSPlusMapInfo/";
+    public const string JPSPlusMapDirPath = "/Resources/Map/JPSPlusMapInfo/";
 
     #endregion
 }

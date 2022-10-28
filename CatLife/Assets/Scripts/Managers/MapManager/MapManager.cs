@@ -4,7 +4,7 @@ using System.IO;
 using BitFramework.Component.AssetsModule;
 using BitFramework.Component.ObjectPoolModule;
 using BitFramework.Core;
-using LitJson;
+using Sirenix.Serialization;
 using UnityEngine;
 
 public class MapManager : MonoBehaviour, IManager
@@ -26,9 +26,9 @@ public class MapManager : MonoBehaviour, IManager
     private void InitMap()
     {
         curMap = App.Make<SpawnManager>().SpawnMap();
-        ScanMapInfo();
+        BuildMapBaseInfo();
 
-        if (useJPS)
+        if (useJPSPlus)
         {
             LoadJPSPlusMapInfo();
             if (isOpenDebug)
@@ -38,6 +38,12 @@ public class MapManager : MonoBehaviour, IManager
                 BuildDiagonalDebugInfo();
             }
         }
+        else
+        {
+            BuildNonJPSPlusNode();
+        }
+
+        pathFinding.Init(column, row, mapNodeCellArray, jpsMapNodeArray);
     }
 
     private Map curMap;
@@ -56,15 +62,12 @@ public class MapManager : MonoBehaviour, IManager
 
     private PathFinding pathFinding;
 
-    private void ScanMapInfo()
-    {
-        leftBottomIndex = curMap.GroundTileMap.origin;
-        var size = curMap.GroundTileMap.size;
-        column = size.x;
-        row = size.y;
+    private NodeCell[,] mapNodeCellArray;
 
+    private void BuildNonJPSPlusNode()
+    {
         // 平面直角坐标系 x轴向右 y轴向上
-        var mapNodeCellArray = new NodeCell[column, row];
+        mapNodeCellArray = new NodeCell[column, row];
         for (int x = leftBottomIndex.x; x < leftBottomIndex.x + column; x++)
         {
             for (int y = leftBottomIndex.y; y < leftBottomIndex.y + row; y++)
@@ -79,15 +82,21 @@ public class MapManager : MonoBehaviour, IManager
                     new NodeCell(isObstacle, pos, nodeCellIndex.x, nodeCellIndex.y, new Vector3Int(x, y, 0));
             }
         }
+    }
 
-        pathFinding.Init(column, row, mapNodeCellArray, jpsMapNodeArray);
+    private void BuildMapBaseInfo()
+    {
+        leftBottomIndex = curMap.GroundTileMap.origin;
+        var size = curMap.GroundTileMap.size;
+        column = size.x;
+        row = size.y;
     }
 
     private void LoadJPSPlusMapInfo()
     {
-        string mapInfoPath = AssetsPath.JPSPlusMapDirPath + curMap.gameObject.name;
-        var mapInfoJson = File.ReadAllText(mapInfoPath);
-        jpsMapNodeArray = JsonMapper.ToObject<JPSPlusNode[,]>(mapInfoJson);
+        string mapInfoPath = Application.dataPath + AssetsPath.JPSPlusMapDirPath + curMap.gameObject.name + ".json";
+        var mapInfoJson = File.ReadAllBytes(mapInfoPath);
+        jpsMapNodeArray = SerializationUtility.DeserializeValue<JPSPlusNode[,]>(mapInfoJson, DataFormat.JSON);
     }
 
     #region JPS+ Preprocess Map

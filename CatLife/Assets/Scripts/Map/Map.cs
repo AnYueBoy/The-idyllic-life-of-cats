@@ -1,8 +1,11 @@
 ﻿using System.IO;
 using LitJson;
 using Sirenix.OdinInspector;
+using Sirenix.Serialization;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using SerializationUtility = Sirenix.Serialization.SerializationUtility;
 
 public class Map : MonoBehaviour
 {
@@ -48,15 +51,17 @@ public class Map : MonoBehaviour
         BuildStraightJumpPoint();
         BuildDiagonalJumpPoint();
 
+        string mapInfoDirPath = Application.dataPath + AssetsPath.JPSPlusMapDirPath;
         // 写入数据
-        if (!Directory.Exists(AssetsPath.JPSPlusMapDirPath))
+        if (!Directory.Exists(mapInfoDirPath))
         {
-            Directory.CreateDirectory(AssetsPath.JPSPlusMapDirPath);
+            Directory.CreateDirectory(mapInfoDirPath);
         }
 
-        string mapInfoPath = AssetsPath.JPSPlusMapDirPath + gameObject.name;
-        var mapInfoJson = JsonMapper.ToJson(jpsMapNodeArray);
-        File.WriteAllText(mapInfoPath,mapInfoJson);
+        string mapInfoPath = mapInfoDirPath + gameObject.name + ".json";
+        var mapInfoJson = SerializationUtility.SerializeValue(jpsMapNodeArray, DataFormat.JSON);
+        File.WriteAllBytes(mapInfoPath, mapInfoJson);
+        AssetDatabase.Refresh();
     }
 
     private JPSPlusNode[,] jpsMapNodeArray;
