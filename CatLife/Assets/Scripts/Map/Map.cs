@@ -1,4 +1,6 @@
-﻿using Sirenix.OdinInspector;
+﻿using System.IO;
+using LitJson;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -41,12 +43,20 @@ public class Map : MonoBehaviour
                     nodeCellIndex.y, new Vector3Int(x, y, 0));
             }
         }
-        
+
         BuildPrimaryJumpPoints();
         BuildStraightJumpPoint();
         BuildDiagonalJumpPoint();
-        
-        // TODO: 写入数据
+
+        // 写入数据
+        if (!Directory.Exists(AssetsPath.JPSPlusMapDirPath))
+        {
+            Directory.CreateDirectory(AssetsPath.JPSPlusMapDirPath);
+        }
+
+        string mapInfoPath = AssetsPath.JPSPlusMapDirPath + gameObject.name;
+        var mapInfoJson = JsonMapper.ToJson(jpsMapNodeArray);
+        File.WriteAllText(mapInfoPath,mapInfoJson);
     }
 
     private JPSPlusNode[,] jpsMapNodeArray;

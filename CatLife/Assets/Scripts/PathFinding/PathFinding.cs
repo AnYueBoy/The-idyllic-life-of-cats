@@ -6,7 +6,7 @@ using UnityEngine;
 public class PathFinding
 {
     private NodeCell[,] nodeCellArray;
-    private JPSPlusNode[,] jpsPluMapNodeArray;
+    private JPSPlusNode[,] jpsPlusMapNodeArray;
     private int horizontalValue;
     private int verticalValue;
     private BinaryHeap<NodeCell> binaryHeap;
@@ -29,12 +29,13 @@ public class PathFinding
         new Vector2Int(1, 1),
     };
 
-    public void Init(int horizontalValue, int verticalValue, NodeCell[,] nodeCellArray, JPSPlusNode[,] jpsMapNodeArray)
+    public void Init(int horizontalValue, int verticalValue, NodeCell[,] nodeCellArray,
+        JPSPlusNode[,] jpsPlusMapNodeArray)
     {
         this.horizontalValue = horizontalValue;
         this.verticalValue = verticalValue;
         this.nodeCellArray = nodeCellArray;
-        this.jpsPluMapNodeArray = jpsMapNodeArray;
+        this.jpsPlusMapNodeArray = jpsPlusMapNodeArray;
         binaryHeap = new BinaryHeap<NodeCell>();
         jpsPlusHeap = new BinaryHeap<JPSPlusNode>();
     }
@@ -386,8 +387,8 @@ public class PathFinding
 
     public List<Vector3> FindPathByJpsPlus(Vector2Int startTileIndex, Vector2Int endTileIndex)
     {
-        return FindPathByJpsPlus(jpsPluMapNodeArray[startTileIndex.x, startTileIndex.y],
-            jpsPluMapNodeArray[endTileIndex.x, endTileIndex.y]);
+        return FindPathByJpsPlus(jpsPlusMapNodeArray[startTileIndex.x, startTileIndex.y],
+            jpsPlusMapNodeArray[endTileIndex.x, endTileIndex.y]);
     }
 
     public List<Vector3> FindPathByJpsPlus(JPSPlusNode startNode, JPSPlusNode endNode)
@@ -421,7 +422,7 @@ public class PathFinding
                     newSuccessor = endNode;
                     gCost = curNode.gCost + JPSPlusNode.Diff(curNode, endNode);
                 }
-                
+
                 // 如上一样的思想，只是此条件为对角线方向的检查逻辑
                 // 如果当前方向为对角线方向 且 当前节点与目标节点的方向为通用方向 且 当前节点与目标节点的行/列间距<=当前节点的下一个跳点/墙的距离
                 else if (IsDiagonal(dir) && GoalIsInGeneralDirection(curNode, dir, endNode) &&
@@ -509,7 +510,7 @@ public class PathFinding
 
         if (IsInBound(x, y))
         {
-            return jpsPluMapNodeArray[x, y];
+            return jpsPlusMapNodeArray[x, y];
         }
 
         return null;
