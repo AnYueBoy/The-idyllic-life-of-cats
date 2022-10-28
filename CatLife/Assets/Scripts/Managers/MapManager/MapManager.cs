@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using BitFramework.Component.AssetsModule;
 using BitFramework.Component.ObjectPoolModule;
 using BitFramework.Core;
@@ -62,10 +61,10 @@ public class MapManager : MonoBehaviour, IManager
         {
             for (int y = leftBottomIndex.y; y < leftBottomIndex.y + row; y++)
             {
-                bool isObstacle = IsObstacle(x, y);
-                Vector3 pos = GetPosByTileIndex(x, y);
+                bool isObstacle = MapUtil.IsObstacle(curMap.GroundTileMap, curMap.ObstacleTileMap, x, y);
+                Vector3 pos = MapUtil.GetPosByTileIndex(curMap.GroundTileMap, x, y);
 
-                Vector2Int nodeCellIndex = ConvertTileIndexToCellIndex(x, y);
+                Vector2Int nodeCellIndex = MapUtil.ConvertTileIndexToCellIndex(curMap.GroundTileMap, x, y);
 
                 // 构建非JPS+的节点信息
                 mapNodeCellArray[nodeCellIndex.x, nodeCellIndex.y] =
@@ -552,51 +551,15 @@ public class MapManager : MonoBehaviour, IManager
 
     #endregion
 
-    private bool IsObstacle(int x, int y)
-    {
-        Vector3Int tileIndex = new Vector3Int(x, y, 0);
-        if (!curMap.GroundTileMap.HasTile(tileIndex))
-        {
-            return true;
-        }
-
-        if (curMap.ObstacleTileMap.HasTile(tileIndex))
-        {
-            return true;
-        }
-
-        return false;
-    }
-
-    private Vector3 GetPosByTileIndex(int x, int y)
-    {
-        Vector3Int tileIndex = new Vector3Int(x, y, 0);
-        // 返回的是格子左下角坐标
-        var pos = curMap.GroundTileMap.CellToWorld(tileIndex);
-
-        // 将坐标转换为格子中心点坐标
-        var cellSize = curMap.GroundTileMap.layoutGrid.cellSize;
-        pos.x += cellSize.x / 2;
-        pos.y += cellSize.y / 2;
-        return pos;
-    }
-
-    private Vector2Int ConvertTileIndexToCellIndex(int tileX, int tileY)
-    {
-        int x = tileX + Mathf.Abs(leftBottomIndex.x);
-        x = Mathf.Clamp(x, 0, column - 1);
-        int y = tileY + Mathf.Abs(leftBottomIndex.y);
-        y = Mathf.Clamp(y, 0, row - 1);
-        return new Vector2Int(x, y);
-    }
-
     public List<Vector3> FindPath(Vector3 startPos, Vector3 endPos)
     {
         var endCellIndex = curMap.GroundTileMap.WorldToCell(endPos);
         var startCellIndex = curMap.GroundTileMap.WorldToCell(startPos);
 
-        var startNodeArrayIndex = ConvertTileIndexToCellIndex(startCellIndex.x, startCellIndex.y);
-        var endNodeArrayIndex = ConvertTileIndexToCellIndex(endCellIndex.x, endCellIndex.y);
+        var startNodeArrayIndex =
+            MapUtil.ConvertTileIndexToCellIndex(curMap.GroundTileMap, startCellIndex.x, startCellIndex.y);
+        var endNodeArrayIndex =
+            MapUtil.ConvertTileIndexToCellIndex(curMap.GroundTileMap, endCellIndex.x, endCellIndex.y);
         List<Vector3> pathPosList;
         if (useJPSPlus)
         {
