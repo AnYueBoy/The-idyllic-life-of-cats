@@ -3,7 +3,7 @@ Shader "Unlit/Outline"
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
-        _OutlineWidth("OutlineWidth",float) = 0.1
+        _OutlineWidth("OutlineWidth",Range(0,1)) = 0.1
         _OutlineColor("OutlineColor",Color) = (1,1,1,1)
     }
     SubShader
