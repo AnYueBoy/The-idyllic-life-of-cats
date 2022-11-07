@@ -414,8 +414,7 @@ public class PathFinding
                 JPSPlusNode newSuccessor = null;
                 int gCost = 0;
 
-                // 检查正方向是否与目标点一致，且到目标点的值小于计算值，则此节点此方向的后继节点可认为为目标点
-                // 如果当前方向为基本方向 且 当前节点与目标节点方向为方正方向 且 当前节点与目标节点的行/列间距的最大值<=当前节点的下一个跳点/墙的距离
+                // 检查当前的方向dir,是否与curNode 到endNode方向一致，且到目标点的值小于计算值，则此节点此方向的后继节点可认为为目标点
                 if (IsCardinal(dir) && GoalIsInExactDirection(curNode, dir, endNode) &&
                     JPSPlusNode.Diff(curNode, endNode) <= Mathf.Abs(curNode.distances[(int)dir]))
                 {
@@ -424,7 +423,6 @@ public class PathFinding
                 }
 
                 // 如上一样的思想，只是此条件为对角线方向的检查逻辑
-                // 如果当前方向为对角线方向 且 当前节点与目标节点的方向为通用方向 且 当前节点与目标节点的行/列间距<=当前节点的下一个跳点/墙的距离
                 else if (IsDiagonal(dir) && GoalIsInGeneralDirection(curNode, dir, endNode) &&
                          (Mathf.Abs(endNode.y - curNode.y) <= Mathf.Abs(curNode.distances[(int)dir]) ||
                           Mathf.Abs(endNode.x - curNode.x) <= Mathf.Abs(curNode.distances[(int)dir])))
