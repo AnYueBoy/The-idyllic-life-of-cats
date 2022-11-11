@@ -633,6 +633,10 @@ public class PathFinding
 
     #endregion
 
+    #region JPS_Bit
+
+    #endregion
+
     private int GetManhattan(NodeCell curNode, NodeCell endCell)
     {
         return Mathf.Abs(endCell.x - curNode.x) * 10 + Mathf.Abs(endCell.y - curNode.y) * 10;

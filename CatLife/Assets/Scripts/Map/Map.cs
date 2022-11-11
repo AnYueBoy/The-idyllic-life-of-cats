@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using LitJson;
 using Sirenix.OdinInspector;
 using Sirenix.Serialization;
@@ -20,7 +21,7 @@ public class Map : MonoBehaviour
 
     #region 预处理地图
 
-    [Button("预处理地图", ButtonSizes.Large)]
+    [Button("JPS+预处理地图", ButtonSizes.Large)]
     private void PreprocessMap()
     {
         Vector3Int leftBottomIndex = groundTileMap.origin;
@@ -387,6 +388,52 @@ public class Map : MonoBehaviour
     private bool isEmpty(int x, int y)
     {
         return isInBound(x, y) && !jpsMapNodeArray[x, y].isObstacle;
+    }
+
+    #endregion
+
+    #region JPS_Bit 预处理
+
+    [Button("JPSBit预处理地图", ButtonSizes.Large)]
+    private void PreprocessMapByJPSBit()
+    {
+        Vector3Int leftBottomIndex = groundTileMap.origin;
+        var size = groundTileMap.size;
+        column = size.x;
+        row = size.y;
+        var totalNodeCount = column * row;
+        var infoCount = totalNodeCount / 64 + (totalNodeCount % 64 == 0 ? 0 : 1);
+        UInt64[] mapInfo = new UInt64 [infoCount];
+        int totalIndex = 0;
+
+        for (int x = leftBottomIndex.x; x < leftBottomIndex.x + column; x++)
+        {
+            for (int y = leftBottomIndex.y; y < leftBottomIndex.y + row; y++)
+            {
+                bool isObstacle = MapUtil.IsObstacle(groundTileMap, obstacleTileMap, x, y);
+
+                int index = totalIndex / 64;
+                if (isObstacle)
+                {
+                    mapInfo[index]++;
+                }
+
+                mapInfo[index] <<= 1;
+                totalIndex++;
+            }
+        }
+
+        string mapInfoDirPath = Application.dataPath + AssetsPath.JPSBitMapDirPath;
+        // 写入数据
+        if (!Directory.Exists(mapInfoDirPath))
+        {
+            Directory.CreateDirectory(mapInfoDirPath);
+        }
+
+        string mapInfoPath = mapInfoDirPath + gameObject.name + ".json";
+        var mapInfoJson = SerializationUtility.SerializeValue(mapInfo, DataFormat.JSON);
+        File.WriteAllBytes(mapInfoPath, mapInfoJson);
+        AssetDatabase.Refresh();
     }
 
     #endregion
